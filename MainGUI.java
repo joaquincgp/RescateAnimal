@@ -32,7 +32,6 @@ public class MainGUI extends JFrame {
 
     private JTextField donanteField;
     private JTextField montoField;
-    private JTextArea textAreaAnimales;
     private Albergue albergue = new Albergue();
 
     public static void main(String[] args) {
@@ -53,22 +52,18 @@ public class MainGUI extends JFrame {
                     String idAnimal = idField.getText();
                     String especieTexto = especieField.getText().toUpperCase();
                     String colorAnimal = colorField.getText();
-                    char pabellon = pabellonField.getText().toLowerCase().charAt(0);
+                    String pabellon = pabellonField.getText().toLowerCase();
 
-                    if (nombreAnimal.isEmpty() || inputFecha.isEmpty() || idAnimal.isEmpty() || especieTexto.isEmpty() || colorAnimal.isEmpty()) {
+                    if (nombreAnimal.isEmpty() || inputFecha.isEmpty() || idAnimal.isEmpty() || especieTexto.isEmpty() || colorAnimal.isEmpty() || pabellon.isEmpty()) {
                         throw new CampoVacioException("Algun campo esta vacio");
                     }
-                    if(pabellon!= 'a' && pabellon != 'b'){
-                        throw new CampoVacioException("Algun campo esta mal");
-                    }
-
                     LocalDate fechaNacimiento = LocalDate.parse(inputFecha, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                     Animal.Especie especieAnimal = Animal.Especie.valueOf(especieTexto);
 
                     Animal animalRegistrado = new Animal(nombreAnimal, fechaNacimiento, idAnimal, colorAnimal, pabellon, especieAnimal);
                     albergue.agregarAnimal(animalRegistrado);
                 } catch (CampoVacioException ex) {
-                    JOptionPane.showMessageDialog(MainGUI.this, "Error al registrar animalito: Hay algun(os) campo(s) vacio(s) o un formato no es valido", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Error al registrar animalito: Hay algun(os) campo(s) vacio(s) o un formato no es valido", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });

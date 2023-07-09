@@ -19,15 +19,17 @@ public class Albergue {
         animalesRescatados = new ArrayList<>();
     }
     public void agregarAnimal(Animal animal) {
-        if (hayEspacioDisponible()) {
-            animalesRescatados.add(animal);
-            JOptionPane.showMessageDialog(null,"Animal agregado al albergue: " + animal.getNombreAnimal());
-        } else {
-            JOptionPane.showMessageDialog(null,"No hay espacio disponible en el albergue.");
-        }
-        if(animal == buscarAnimal(animal.getId())){
+        if(animalYaExiste(animal)){
             JOptionPane.showMessageDialog(null,"El animalito ya esta registrado");
+        }else{
+            if (hayEspacioDisponible()) {
+                animalesRescatados.add(animal);
+                JOptionPane.showMessageDialog(null,"Animal agregado al albergue: " + animal.getNombreAnimal());
+            } else {
+                JOptionPane.showMessageDialog(null,"No hay espacio disponible en el albergue.");
+            }
         }
+
     }
     public void adoptarAnimal(Animal animal) {
         Animal animalBuscado = buscarAnimal(animal.getId());
@@ -64,6 +66,15 @@ public class Albergue {
             }
         }
         return animalBuscado;
+    }
+
+    private boolean animalYaExiste(Animal animal) {
+        for (Animal animalRescatado : animalesRescatados) {
+            if (animalRescatado.getId().equals(animal.getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
