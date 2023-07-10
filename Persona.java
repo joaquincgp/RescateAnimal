@@ -4,19 +4,16 @@ public class Persona {
     private String cedula;
     private String correo;
     private String genero;
-    private String estadoCivil;
     private String direccion;
     private Animal adopcion;
 
 
-    public Persona(String nombrePersona, String celular, String cedula, String correo, String genero,
-                   String estadoCivil, String direccion) {
+    public Persona(String nombrePersona, String celular, String cedula, String correo, String genero, String direccion) {
         this.nombrePersona = nombrePersona;
         this.celular = celular;
         this.cedula = cedula;
         this.correo = correo;
         this.genero = genero;
-        this.estadoCivil = estadoCivil;
         this.direccion = direccion;
     }
 
@@ -38,10 +35,6 @@ public class Persona {
 
     public String getGenero() {
         return genero;
-    }
-
-    public String getEstadoCivil() {
-        return estadoCivil;
     }
 
     public String getDireccion() {

@@ -13,7 +13,15 @@ public class Veterinaria {
     public Veterinaria() {
         doctores = new ArrayList<>();
         citas = new ArrayList<>();
+
+        doctores.add(new Doctor("Dr. Juan Pérez", "092234890", "3676378162","juanperez@hotmail.com","Masculino","Quito","Especialidad en Medicina Interna Canina"));
+        doctores.add(new Doctor("Dra. María Gómez", "0987654321", "589364242","mariagomez@hotmail.com","Femenino","Quito", "Especialidad en Dermatología Felina"));
+        doctores.add(new Doctor("Dr. Carlos Rodríguez", "0992673633", "0832633232", "carlorodri@hotmail.com","Masculino","Quito","Especialidad en Ortopedia y Traumatología Canina"));
+        doctores.add(new Doctor("Dra. Laura Vargas", "0987654321", "7326837232", "dralauvargas@hotmail.com","Femenino","Quito","Especialidad en Cardiología Felina"));
+        doctores.add(new Doctor("Dr. Andrés López", "094321098", "3784728963", "docandres@hotmail.com","Masculino","Quito","Especialidad en Odontología Canina"));
     }
+
+
 
     /**
      * Agendar cita y agregar al array

@@ -16,7 +16,7 @@ public class MainGUI extends JFrame {
     private JButton adoptarButton;
     private JComboBox comboBoxDoctor;
     private JTextField fechaCitaField;
-    private JTextField pacienteField;
+    private JTextField idpacienteField;
     private JButton agendarButton;
     private JTextField idAdopcionField;
     private JTextField nombreResponsableField;
@@ -25,7 +25,6 @@ public class MainGUI extends JFrame {
     private JTextField celularResponsableField;
     private JTextField cedulaField;
     private JTextField correoField;
-    private JTextField estadoCivilField;
     private JTextField direccionField;
     private JScrollBar scrollBar1;
 
@@ -33,7 +32,7 @@ public class MainGUI extends JFrame {
     private JTextField montoField;
     private JComboBox comboBoxSexo;
     private Albergue albergue = new Albergue();
-
+    private Veterinaria veterinaria = new Veterinaria();
     public static void main(String[] args) {
             MainGUI panel = new MainGUI();
             panel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -77,14 +76,13 @@ public class MainGUI extends JFrame {
                     String celularAdoptante = celularResponsableField.getText();
                     String cedulaAdoptante = cedulaField.getText();
                     String correoAdoptante = correoField.getText();
-                    String estadoCivilAdoptante = estadoCivilField.getText();
                     String direccionAdoptante = direccionField.getText();
                     String generoAdoptante = (String)comboBoxSexo.getSelectedItem();
-                    if (idAdopcion.isEmpty() || nombreAdoptante.isEmpty() || cedulaAdoptante.isEmpty() || celularAdoptante.isEmpty() || correoAdoptante.isEmpty() || estadoCivilAdoptante.isEmpty() || direccionAdoptante.isEmpty()) {
+                    if (idAdopcion.isEmpty() || nombreAdoptante.isEmpty() || cedulaAdoptante.isEmpty() || celularAdoptante.isEmpty() || correoAdoptante.isEmpty() ||direccionAdoptante.isEmpty()) {
                         throw new CampoVacioException("Algun campo esta vacio");
                     }else{
                         Animal animalAdoptado = albergue.buscarAnimal(idAdopcion);
-                        Persona nuevoDuenio = new Persona(nombreAdoptante, celularAdoptante, cedulaAdoptante, correoAdoptante, generoAdoptante,estadoCivilAdoptante, direccionAdoptante );
+                        Persona nuevoDuenio = new Persona(nombreAdoptante, celularAdoptante, cedulaAdoptante, correoAdoptante, generoAdoptante, direccionAdoptante );
                         albergue.adoptarAnimal(animalAdoptado);
                         animalAdoptado.setDuenio(nuevoDuenio);
                         JOptionPane.showMessageDialog(MainGUI.this,"Gracias a ti "+nuevoDuenio.getNombrePersona()+" ahora "+ animalAdoptado.getNombreAnimal()+" encontro un nuevo hogar!", "Gracias", JOptionPane.INFORMATION_MESSAGE);
@@ -97,7 +95,12 @@ public class MainGUI extends JFrame {
         agendarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String pacienteID = idpacienteField.getText();
+                if (!albergue.animalYaExiste(albergue.buscarAnimal(pacienteID))) {
+                    JOptionPane.showMessageDialog(MainGUI.this, "Error al agendar cita: El animal no pertenece al albergue", "Error", JOptionPane.ERROR_MESSAGE);
+                }else{
 
+                }
             }
         });
 

@@ -20,6 +20,7 @@ public class Animal {
     private String pabellon;
     private Persona duenio;
     private Especie especie;
+    private Historial historialMedico;
 
     public Animal(String nombreAnimal, LocalDate fechaNacimiento, String id, String color, String pabellon,Especie especie) {
         this.nombreAnimal = nombreAnimal;
@@ -68,5 +69,9 @@ public class Animal {
 
     public void setDuenio(Persona duenio) {
         this.duenio = duenio;
+    }
+
+    public Historial getHistorialMedico() {
+        return historialMedico;
     }
 }
