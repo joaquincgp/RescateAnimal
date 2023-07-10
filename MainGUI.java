@@ -27,14 +27,15 @@ public class MainGUI extends JFrame {
     private JTextField cedulaField;
     private JTextField correoField;
     private JTextField direccionField;
-    private JScrollBar scrollBar1;
 
     private JTextField donanteField;
     private JTextField montoField;
     private JComboBox comboBoxSexo;
     private JButton cancelarCitaButton;
+    private JButton nuestrosPequeñosButton;
     private Albergue albergue = new Albergue();
     private Veterinaria veterinaria = new Veterinaria();
+    private CuentaAhorros cuenta = new CuentaAhorros();
     public static void main(String[] args) {
             MainGUI panel = new MainGUI();
             panel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -142,7 +143,13 @@ public class MainGUI extends JFrame {
         donarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                try {
+                    String donante = donanteField.getText();
+                    double monto = Double.parseDouble(montoField.getText());
+                    cuenta.registrarDonacion(new Donacion(donante, monto));
+                } catch (NumberFormatException nfe) {
+                    JOptionPane.showMessageDialog(MainGUI.this, "Error al realizar donacion: Hay algun(os) campo(s) vacio(s) o un formato no es valido", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 

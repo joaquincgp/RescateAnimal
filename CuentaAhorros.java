@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ public class CuentaAhorros {
     public void registrarDonacion(Donacion donacion){
         donaciones.add(donacion);
         total += donacion.getMonto();
+        JOptionPane.showMessageDialog(null, "Gracias "+donacion.getDonante()+". Tu donacion ha sido aceptada");
     }
 
     public void cancelarDonacion(String codigo){

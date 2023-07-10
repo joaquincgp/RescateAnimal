@@ -3,18 +3,18 @@ import java.time.LocalDate;
 import java.util.Random;
 
 public class Donacion {
-    private Persona donante;
+    private String donante;
     private double monto;
     private String codigo; //se genera uno aleatorio
     private LocalDate fechaDonacion;
 
-    public Donacion(Persona donante, double monto) {
+    public Donacion(String donante, double monto) {
         this.donante = donante;
         this.monto = monto;
         this.fechaDonacion = LocalDate.now();
     }
 
-    public Persona getDonante() {
+    public String getDonante() {
         return donante;
     }
 
@@ -38,7 +38,8 @@ public class Donacion {
             sb.append(cifra);
         }
 
-        return sb.toString();
+        codigo = sb.toString();
+        return codigo;
     }
 }
 
