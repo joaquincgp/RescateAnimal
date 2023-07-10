@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,12 +33,40 @@ public class Veterinaria {
     }
 
     public void cancelarCita(Cita cita) {
-        citas.remove(cita);
-    }
-    public void agregarVeterinario(Doctor doctor) {
-        doctores.add(doctor);
+        if(buscarCitaPorIdPaciente(cita.getPaciente().getId()) != null){
+            citas.remove(cita);
+            JOptionPane.showMessageDialog(null,"La cita con "+cita.getPaciente().getNombreAnimal()+" para el "+cita.getFechaAgendada()+ " se cancelo");
+        }else{
+            JOptionPane.showMessageDialog(null,"No hay citas asociadas con este animal");
+
+        }
+
     }
 
+    public List<Doctor> getDoctores() {
+        return doctores;
+    }
+    public Doctor buscarDoctor(String nombreDoctor) {
+        for (Doctor doctor : doctores) {
+            if (doctor.getNombrePersona().equals(nombreDoctor)) {
+                return doctor;
+            }
+        }
+        return null; // Retornar null si no se encuentra el doctor
+    }
+
+    public Cita buscarCitaPorIdPaciente(String idPaciente) {
+        Cita encontrada = null;
+
+        for (Cita cita : citas) {
+            String idPacienteCita = cita.getPaciente().getId();
+
+            if (idPacienteCita.equals(idPaciente)) {
+                encontrada = cita;
+            }
+        }
+        return encontrada;
+    }
 
     public void verCitas() {
         for (Cita cita : citas) {
@@ -50,4 +79,7 @@ public class Veterinaria {
         }
     }
 
+    public List<Cita> getCitas() {
+        return citas;
+    }
 }

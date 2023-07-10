@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class MainGUI extends JFrame {
     private JTextField nombreInscripcionlField;
@@ -31,6 +32,7 @@ public class MainGUI extends JFrame {
     private JTextField donanteField;
     private JTextField montoField;
     private JComboBox comboBoxSexo;
+    private JButton cancelarCitaButton;
     private Albergue albergue = new Albergue();
     private Veterinaria veterinaria = new Veterinaria();
     public static void main(String[] args) {
@@ -95,15 +97,48 @@ public class MainGUI extends JFrame {
         agendarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String pacienteID = idpacienteField.getText();
-                if (!albergue.animalYaExiste(albergue.buscarAnimal(pacienteID))) {
-                    JOptionPane.showMessageDialog(MainGUI.this, "Error al agendar cita: El animal no pertenece al albergue", "Error", JOptionPane.ERROR_MESSAGE);
-                }else{
+                try {
+                    String pacienteID = idpacienteField.getText();
+                    String fechaAgenda = fechaCitaField.getText();
+                    LocalDate fechaCita = LocalDate.parse(fechaAgenda, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                    String doctor = (String) comboBoxDoctor.getSelectedItem();
+                    Doctor doctorAsignado = veterinaria.buscarDoctor(doctor);
+                    Animal paciente = albergue.buscarAnimal(pacienteID);
+                        if (doctorAsignado != null) {
+                            if (!albergue.animalYaExiste(albergue.buscarAnimal(pacienteID))) {
+                                JOptionPane.showMessageDialog(MainGUI.this, "Error al agendar cita: El animal no pertenece al albergue", "Error", JOptionPane.ERROR_MESSAGE);
+                            } else {
+                                veterinaria.programarCita(new Cita(fechaCita, paciente, doctorAsignado));
+                                JOptionPane.showMessageDialog(MainGUI.this, paciente.getNombreAnimal() + ", tu cita con el " + doctorAsignado.getNombrePersona() + " esta agendada!", "Cita agendada", JOptionPane.INFORMATION_MESSAGE);
+                            }
+                        }
+                }catch (DateTimeParseException ex){
+                    JOptionPane.showMessageDialog(MainGUI.this, "Error al agendar cita: Hay algun(os) campo(s) vacio(s) o un formato no es valido", "Error", JOptionPane.ERROR_MESSAGE);
+
+                }
+
+            }
+        });
+        cancelarCitaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    String idPaciente = JOptionPane.showInputDialog(MainGUI.this, "Ingrese el ID del paciente");
+                    Cita citaCancelar = veterinaria.buscarCitaPorIdPaciente(idPaciente);
+                    if(idPaciente.isEmpty()){
+                        throw new CampoVacioException("Campo vacio");
+                    }else{
+                        if (citaCancelar != null) {
+                            veterinaria.cancelarCita(citaCancelar);
+                        }
+                    }
+                }catch (CampoVacioException ex){
+                    JOptionPane.showMessageDialog(MainGUI.this, "Error al cancelar cita: Hay algun(os) campo(s) vacio(s) o un formato no es valido", "Error", JOptionPane.ERROR_MESSAGE);
 
                 }
             }
-        });
 
+        });
         donarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -111,12 +146,8 @@ public class MainGUI extends JFrame {
             }
         });
 
-        verDonacionesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
 
-            }
-        });
+
     }
 
 
