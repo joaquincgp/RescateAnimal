@@ -251,7 +251,7 @@
       </component>
       <component id="39093" class="javax.swing.JTextField" binding="direccionField">
         <constraints>
-          <grid row="18" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="19" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
@@ -311,7 +311,7 @@
       </component>
       <component id="fd55b" class="javax.swing.JLabel">
         <constraints>
-          <grid row="18" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="19" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Direccion"/>
@@ -387,14 +387,6 @@
         </constraints>
         <properties>
           <text value="Registrar"/>
-        </properties>
-      </component>
-      <component id="dd368" class="javax.swing.JButton" binding="adoptarButton" default-binding="true">
-        <constraints>
-          <grid row="19" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Adoptar"/>
         </properties>
       </component>
       <component id="192a8" class="javax.swing.JScrollBar" binding="scrollBar1" default-binding="true">
@@ -547,6 +539,33 @@
         <properties>
           <icon value="Images/foot.png"/>
           <text value=""/>
+        </properties>
+      </component>
+      <component id="32291" class="javax.swing.JComboBox" binding="comboBoxSexo">
+        <constraints>
+          <grid row="18" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <model>
+            <item value="Masculino"/>
+            <item value="Femenino"/>
+          </model>
+        </properties>
+      </component>
+      <component id="fa68a" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="18" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Sexo"/>
+        </properties>
+      </component>
+      <component id="70742" class="javax.swing.JButton" binding="adoptarButton" default-binding="true">
+        <constraints>
+          <grid row="11" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Adoptar"/>
         </properties>
       </component>
     </children>

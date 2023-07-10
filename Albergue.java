@@ -35,7 +35,6 @@ public class Albergue {
         Animal animalBuscado = buscarAnimal(animal.getId());
         if (animalBuscado!= null) {
             animalesRescatados.remove(animal);
-            JOptionPane.showMessageDialog(null,"Animal eliminado del albergue: " + animal.getNombreAnimal());
         } else {
             JOptionPane.showMessageDialog(null,"El animal no se encuentra en el albergue.");
         }
@@ -64,6 +63,9 @@ public class Albergue {
                 animalBuscado= a;
                 encontre = true;
             }
+        }
+        if(!encontre){
+            JOptionPane.showMessageDialog(null, "El animal no existe");
         }
         return animalBuscado;
     }

@@ -3,7 +3,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
 
 public class MainGUI extends JFrame {
     private JTextField nombreInscripcionlField;
@@ -32,6 +31,7 @@ public class MainGUI extends JFrame {
 
     private JTextField donanteField;
     private JTextField montoField;
+    private JComboBox comboBoxSexo;
     private Albergue albergue = new Albergue();
 
     public static void main(String[] args) {
@@ -79,13 +79,18 @@ public class MainGUI extends JFrame {
                     String correoAdoptante = correoField.getText();
                     String estadoCivilAdoptante = estadoCivilField.getText();
                     String direccionAdoptante = direccionField.getText();
+                    String generoAdoptante = (String)comboBoxSexo.getSelectedItem();
                     if (idAdopcion.isEmpty() || nombreAdoptante.isEmpty() || cedulaAdoptante.isEmpty() || celularAdoptante.isEmpty() || correoAdoptante.isEmpty() || estadoCivilAdoptante.isEmpty() || direccionAdoptante.isEmpty()) {
                         throw new CampoVacioException("Algun campo esta vacio");
+                    }else{
+                        Animal animalAdoptado = albergue.buscarAnimal(idAdopcion);
+                        Persona nuevoDuenio = new Persona(nombreAdoptante, celularAdoptante, cedulaAdoptante, correoAdoptante, generoAdoptante,estadoCivilAdoptante, direccionAdoptante );
+                        albergue.adoptarAnimal(animalAdoptado);
+                        animalAdoptado.setDuenio(nuevoDuenio);
+                        JOptionPane.showMessageDialog(MainGUI.this,"Gracias a ti "+nuevoDuenio.getNombrePersona()+" ahora "+ animalAdoptado.getNombreAnimal()+" encontro un nuevo hogar!", "Gracias", JOptionPane.INFORMATION_MESSAGE);
                     }
-
                 }catch (CampoVacioException ex){
-                    JOptionPane.showMessageDialog(MainGUI.this, "Error al registrar animalito: Hay algun(os) campo(s) vacio(s) o un formato no es valido", "Error", JOptionPane.ERROR_MESSAGE);
-
+                    JOptionPane.showMessageDialog(MainGUI.this, "Error al adoptar animalito: Hay algun(os) campo(s) vacio(s) o un formato no es valido", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });

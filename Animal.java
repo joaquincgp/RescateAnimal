@@ -65,4 +65,8 @@ public class Animal {
     public Especie getEspecie() {
         return especie;
     }
+
+    public void setDuenio(Persona duenio) {
+        this.duenio = duenio;
+    }
 }
