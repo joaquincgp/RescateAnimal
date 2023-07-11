@@ -33,26 +33,24 @@ public Enfermedades() {
                 String idHistorial = idHistorialTextField.getText();
                 String enfermedad = enfermedadesField1.getText();
                 String pesoString = pesoTextField.getText();
-                double peso = Double.parseDouble(pesoString);
                 String vacuna = vacunasTextField.getText();
-                String fechaDesp = desparacitacionTextField.getText();
-                LocalDate fechaUltimaDesparasitacion = LocalDate.parse(fechaDesp, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
                 List<String> enfermedades = new ArrayList<>();
                 List<String> vacunas = new ArrayList<>();
 
-                if (idHistorial.isEmpty() || enfermedad.isEmpty() || pesoString.isEmpty() || vacuna.isEmpty() || fechaDesp.isEmpty()) {
-                    throw new CampoVacioException("Algun campo esta vacio");
+                if (idHistorial.isEmpty() || enfermedad.isEmpty() || vacuna.isEmpty()  || pesoString.isEmpty()) {
+                    throw new CampoVacioException("Algun campo esta vaci o el formato es incorrecto");
                 }else{
                     enfermedades.add(enfermedad);
                     vacunas.add(vacuna);
                     Animal animalHistorial = albergue2.buscarAnimal(idHistorial);
-                    Historial historialNuevo = new Historial(enfermedades, peso, vacunas, fechaUltimaDesparasitacion);
+                    Historial historialNuevo = new Historial(enfermedades, pesoString, vacunas);
                     animalHistorial.setPerfilMedico(historialNuevo);
                     JOptionPane.showMessageDialog(Enfermedades.this, "La informacion de "+animalHistorial.getNombreAnimal()+" fue actualizada correctamente");
                 }
             }catch(CampoVacioException ex){
-                throw new RuntimeException(ex);
+                JOptionPane.showMessageDialog(null, "Algun campo esta vacio");
+
             }
         }
     });
