@@ -12,6 +12,7 @@ public class Donacion {
         this.donante = donante;
         this.monto = monto;
         this.fechaDonacion = LocalDate.now();
+        codigo = generarCodigoAleatorio();
     }
 
     public String getDonante() {
