@@ -35,6 +35,7 @@ public class MainGUI extends JFrame {
     private JButton cancelarCitaButton;
     private JButton limpiarBaseDeDatosButton;
     private JButton historialesButton;
+    private JTextField motivoTextField;
     private JButton nuestrosPequeñosButton;
     private JTextArea listaAnimales;
     private Albergue albergue = new Albergue();
@@ -234,11 +235,34 @@ public class MainGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
+                    conectar();
                     String donante = donanteField.getText();
-                    double monto = Double.parseDouble(montoField.getText());
-                    cuenta.registrarDonacion(new Donacion(donante, monto));
+                    double monto = Double.parseDouble((montoField.getText()));
+                    String motivo = motivoTextField.getText();
+                    cuenta.registrarDonacion(new Donacion(donante, monto, motivo));
+
+                    String sql = "INSERT INTO donaciones VALUES (?, ?, ?, ?)";
+
+                    PreparedStatement ps = connection.prepareStatement(sql);
+
+                    ps.setString(1, cuenta.generarCodigo());
+                    ps.setString(2, donante);
+                    ps.setString(3, motivo);
+                    ps.setDouble(4, monto);
+                    int filasAfectadas = ps.executeUpdate();
+                    if (filasAfectadas > 0) {
+                        JOptionPane.showMessageDialog(null, "Donacion recibida exitosamente");
+                        donanteField.setText("");
+                        montoField.setText("");
+                        motivoTextField.setText("");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error al recibir donacion", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
                 } catch (NumberFormatException nfe) {
                     JOptionPane.showMessageDialog(MainGUI.this, "Error al realizar donacion: Hay algun(os) campo(s) vacio(s) o un formato no es valido", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
                 }
             }
         });

@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class CuentaAhorros {
     private List<Donacion> donaciones;
@@ -16,27 +17,16 @@ public class CuentaAhorros {
         JOptionPane.showMessageDialog(null, "Gracias "+donacion.getDonante()+". Tu donacion ha sido aceptada");
     }
 
-    public void cancelarDonacion(String codigo){
-        for(Donacion d: donaciones){
-            if(codigo == d.getCodigo()){
-                donaciones.remove(d);
-                System.out.println("Donacion numero "+d.getCodigo()+ " eliminada");
-            }else{
-                System.out.println("No se encontro la donacion con el codigo proporcionado");
-            }
-        }
 
-    }
 
     public List<Donacion> getDonaciones() {
         return donaciones;
     }
 
-    public void verDonaciones(){
-        System.out.println("----Donaciones----");
-        for(Donacion d: donaciones){
-            System.out.println("Donante: "+d.getDonante()+"\n Monto: "+d.getMonto());
-        }
+    public String generarCodigo() {
+        Random random = new Random();
+        int codigo = random.nextInt(9000) + 1000; // Genera un número aleatorio entre 1000 y 9999
+        return String.valueOf(codigo);
     }
 }
 
