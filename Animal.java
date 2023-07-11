@@ -41,6 +41,10 @@ public class Animal {
         return perfilMedico;
     }
 
+    public void setPerfilMedico(Historial perfilMedico) {
+        this.perfilMedico = perfilMedico;
+    }
+
     public String getId() {
         return id;
     }

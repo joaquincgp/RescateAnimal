@@ -276,14 +276,21 @@ public class MainGUI extends JFrame {
                     // Sentencia SQL para eliminar todos los registros de la tabla
                     String sql = "DELETE FROM animales_rescatados";
                     String sql2 = "DELETE FROM animales_adoptados";
+                    String sql3 = "DELETE FROM citas_programadas";
+                    String sql4 = "DELETE FROM donaciones";
                     PreparedStatement ps = connection.prepareStatement(sql);
                     PreparedStatement ps2 = connection.prepareStatement(sql2);
+                    PreparedStatement ps3 = connection.prepareStatement(sql3);
+                    PreparedStatement ps4 = connection.prepareStatement(sql4);
+
 
                     // Ejecutar la sentencia SQL de eliminación
                     int filasAfectadas = ps.executeUpdate();
                     int filasAfectadas2 = ps2.executeUpdate();
+                    int filasAfectadas3 = ps3.executeUpdate();
+                    int filasAfectadas4 = ps4.executeUpdate();
 
-                    if (filasAfectadas > 0 || filasAfectadas2 > 0) {
+                    if (filasAfectadas > 0 || filasAfectadas2 > 0 || filasAfectadas3 > 0 || filasAfectadas4 > 0) {
                         JOptionPane.showMessageDialog(null, "Tablas limpiadas correctamente");
                     } else {
                         JOptionPane.showMessageDialog(null, "Error al limpiar las tablas. Las tablas no tienen datos!", "Error", JOptionPane.ERROR_MESSAGE);

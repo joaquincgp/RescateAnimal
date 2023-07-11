@@ -78,6 +78,4 @@ public class Albergue {
         }
         return false;
     }
-
-
 }
