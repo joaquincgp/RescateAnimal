@@ -1,13 +1,21 @@
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
 public class Historial {
     private List<String> enfermedades;
     private double peso;
     private List<String> medicamentos;
-    private List<Vacuna> vacunas;
-    private boolean desparasitacionAlDia;
-    private Cita ultimaCita;
+    private List<String> vacunas;
+    private LocalDate ultimaDesparasitacion;
 
+    public Historial(List<String> enfermedades, double peso, List<String> medicamentos, List<String> vacunas, LocalDate ultimaDesparasitacion) {
+        this.enfermedades = enfermedades;
+        this.peso = peso;
+        this.medicamentos = medicamentos;
+        this.vacunas = vacunas;
+        this.ultimaDesparasitacion = ultimaDesparasitacion;
+    }
 
     public List<String> getEnfermedades() {
         return enfermedades;
@@ -21,15 +29,13 @@ public class Historial {
         return medicamentos;
     }
 
-    public List<Vacuna> getVacunas() {
+    public List<String> getVacunas() {
         return vacunas;
     }
 
-    public boolean isDesparasitacionAlDia() {
-        return desparasitacionAlDia;
+    public LocalDate getUltimaDesparasitacion() {
+        return ultimaDesparasitacion;
     }
 
-    public Cita getUltimaCita() {
-        return ultimaCita;
-    }
+
 }

@@ -13,14 +13,12 @@ public class Animal {
     }
     private String nombreAnimal;
     private LocalDate fechaNacimiento;
-    private int edad;
     private Historial perfilMedico;
     private String id;
     private String color;
     private String pabellon;
     private Persona duenio;
     private Especie especie;
-    private Historial historialMedico;
 
     public Animal(String nombreAnimal, LocalDate fechaNacimiento, String id, String color, String pabellon,Especie especie) {
         this.nombreAnimal = nombreAnimal;
@@ -37,10 +35,6 @@ public class Animal {
 
     public LocalDate getFechaNacimiento() {
         return fechaNacimiento;
-    }
-
-    public int getEdad() {
-        return edad;
     }
 
     public Historial getPerfilMedico() {
@@ -71,7 +65,5 @@ public class Animal {
         this.duenio = duenio;
     }
 
-    public Historial getHistorialMedico() {
-        return historialMedico;
-    }
+
 }

@@ -33,10 +33,10 @@ public class MainGUI extends JFrame {
     private JTextField montoField;
     private JComboBox comboBoxSexo;
     private JButton cancelarCitaButton;
+    private JButton limpiarBaseDeDatosButton;
+    private JButton historialesButton;
     private JButton nuestrosPequeñosButton;
     private JTextArea listaAnimales;
-    //DefaultListModel mod = new DefaultListModel<>();
-    private JList lista;
     private Albergue albergue = new Albergue();
     private Veterinaria veterinaria = new Veterinaria();
     private CuentaAhorros cuenta = new CuentaAhorros();
@@ -54,34 +54,9 @@ public class MainGUI extends JFrame {
         }
     }
 
-
-
-    /*public void insertar() throws SQLException {
-        conectar();
-        ps = connection.prepareStatement("INSERT INTO animales_rescatados VALUES (?, ?, ?, ?, ?, ?)");
-        ps.setString(1, nombreInscripcionlField.getText());
-        ps.setString(2, String.valueOf(Date.valueOf(fechaNacimientoField.getText())));
-        ps.setString(3, idField.getText());
-        ps.setString(4, colorField.getText());
-        ps.setString(5, pabellonField.getText());
-        ps.setString(6, especieField.getText());
-
-        if (ps.executeUpdate() > 0) {
-            mod.removeAllElements();
-
-            nombreInscripcionlField.setText("");
-            fechaNacimientoField.setText("");
-            idField.setText("");
-            colorField.setText("");
-            pabellonField.setText("");
-            especieField.setText("");
-        }
-    }
-
-     */
     public static void main(String[] args) {
             MainGUI panel = new MainGUI();
-            panel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            panel.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Cambio en esta línea
             panel.setContentPane(panel.panelPrincipal);
             panel.setSize(1900, 1000);
             panel.setVisible(true);
@@ -146,6 +121,7 @@ public class MainGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
+                    conectar();
                     String idAdopcion = idAdopcionField.getText();
                     String nombreAdoptante = nombreResponsableField.getText();
                     String celularAdoptante = celularResponsableField.getText();
@@ -153,6 +129,26 @@ public class MainGUI extends JFrame {
                     String correoAdoptante = correoField.getText();
                     String direccionAdoptante = direccionField.getText();
                     String generoAdoptante = (String)comboBoxSexo.getSelectedItem();
+
+                    String sql = "INSERT INTO animales_adoptados VALUES (?, ?, ?, ?)";
+                    PreparedStatement ps = connection.prepareStatement(sql);
+                    ps.setString(1, albergue.buscarAnimal(idAdopcion).getNombreAnimal());
+                    ps.setString(2, idAdopcion);
+                    ps.setString(3, nombreAdoptante);
+                    ps.setString(4, celularAdoptante);
+
+                    int filasAfectadas = ps.executeUpdate();
+                    if (filasAfectadas > 0) {
+                        JOptionPane.showMessageDialog(null, "Animal adoptado correctamente");
+                        nombreResponsableField.setText("");
+                        celularResponsableField.setText("");
+                        cedulaField.setText("");
+                        correoField.setText("");
+                        direccionField.setText("");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error al adoptar el animal", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
                     if (idAdopcion.isEmpty() || nombreAdoptante.isEmpty() || cedulaAdoptante.isEmpty() || celularAdoptante.isEmpty() || correoAdoptante.isEmpty() ||direccionAdoptante.isEmpty()) {
                         throw new CampoVacioException("Algun campo esta vacio");
                     }else{
@@ -164,6 +160,8 @@ public class MainGUI extends JFrame {
                     }
                 }catch (CampoVacioException ex){
                     JOptionPane.showMessageDialog(MainGUI.this, "Error al adoptar animalito: Hay algun(os) campo(s) vacio(s) o un formato no es valido", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
                 }
             }
         });
@@ -226,17 +224,39 @@ public class MainGUI extends JFrame {
         });
 
 
-        nuestrosPequeñosButton.addActionListener(new ActionListener() {
+        limpiarBaseDeDatosButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                StringBuilder sb = new StringBuilder();
-                for (Animal animal : albergue.getListaAnimalesRescatados()) {
-                    sb.append("Nombre: ").append(animal.getNombreAnimal()).append("\n");
-                    sb.append("Especie: ").append(animal.getEspecie()).append("\n");
-                    sb.append("ID: ").append(animal.getId()).append("\n");
-                    sb.append("---------------------------\n");
+                try {
+                    conectar();
+                    // Sentencia SQL para eliminar todos los registros de la tabla
+                    String sql = "DELETE FROM animales_rescatados";
+                    String sql2 = "DELETE FROM animales_adoptados";
+                    PreparedStatement ps = connection.prepareStatement(sql);
+                    PreparedStatement ps2 = connection.prepareStatement(sql2);
+
+                    // Ejecutar la sentencia SQL de eliminación
+                    int filasAfectadas = ps.executeUpdate();
+                    int filasAfectadas2 = ps2.executeUpdate();
+
+                    if (filasAfectadas > 0 && filasAfectadas2 > 0) {
+                        JOptionPane.showMessageDialog(null, "Tablas limpiadas correctamente");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error al limpiar las tablas", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
+
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Error al limpiar la tabla: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                listaAnimales.setText(sb.toString());
+            }
+        });
+        historialesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Enfermedades frameEnfermedades = new Enfermedades();
+                frameEnfermedades.setVisible(true);
+                frameEnfermedades.show();
             }
         });
     }
