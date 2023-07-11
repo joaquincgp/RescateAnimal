@@ -14,18 +14,22 @@ public class Enfermedades extends JFrame {
     private JTextField vacunasTextField;
     private JTextField desparacitacionTextField;
     private JTextField idHistorialTextField;
-    private Albergue albergue2 = new Albergue();
-
+    private Albergue albergue;
+    public void setAlbergue(Albergue albergue) {
+        this.albergue = albergue;
+    }
 
 
 public Enfermedades() {
-    setTitle("Enfermedades"); // Establece el título del JFrame
+    setTitle("Perfil medico"); // Establece el título del JFrame
     setSize(400, 600);
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Cambio en esta línea
     setContentPane(panelEnfermedades); // Establece el panel principal del JFrame
-
+    setResizable(false);
     pack(); // Ajusta automáticamente el tamaño del JFrame según su contenido
     setLocationRelativeTo(null); // Centra el JFrame en la pantalla
+
+
     ingresarButton.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -37,13 +41,14 @@ public Enfermedades() {
 
                 List<String> enfermedades = new ArrayList<>();
                 List<String> vacunas = new ArrayList<>();
+                Animal animalHistorial = albergue.buscarAnimal(idHistorial);
+
 
                 if (idHistorial.isEmpty() || enfermedad.isEmpty() || vacuna.isEmpty()  || pesoString.isEmpty()) {
-                    throw new CampoVacioException("Algun campo esta vaci o el formato es incorrecto");
+                    throw new CampoVacioException("Algun campo esta vacio o el formato es incorrecto");
                 }else{
                     enfermedades.add(enfermedad);
                     vacunas.add(vacuna);
-                    Animal animalHistorial = albergue2.buscarAnimal(idHistorial);
                     Historial historialNuevo = new Historial(enfermedades, pesoString, vacunas);
                     animalHistorial.setPerfilMedico(historialNuevo);
                     JOptionPane.showMessageDialog(Enfermedades.this, "La informacion de "+animalHistorial.getNombreAnimal()+" fue actualizada correctamente");

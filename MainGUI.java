@@ -85,9 +85,9 @@ public class MainGUI extends JFrame {
                     ps.setString(1, nombreAnimal);
                     ps.setDate(2, Date.valueOf(fechaNacimiento));
                     ps.setString(3, idField.getText());
-                    ps.setString(4, especieField.getText());
-                    ps.setString(5, colorField.getText());
-                    ps.setString(6, pabellonField.getText());
+                    ps.setString(4, colorField.getText());
+                    ps.setString(5, pabellonField.getText());
+                    ps.setString(6, especieField.getText());
 
                     int filasAfectadas = ps.executeUpdate();
                     if (filasAfectadas > 0) {
@@ -240,8 +240,8 @@ public class MainGUI extends JFrame {
                     double monto = Double.parseDouble((montoField.getText()));
                     String motivo = motivoTextField.getText();
                     cuenta.registrarDonacion(new Donacion(donante, monto, motivo));
-
-                    String sql = "INSERT INTO donaciones VALUES (?, ?, ?, ?)";
+                    JOptionPane.showMessageDialog(MainGUI.this, "Ya se han recolectado $"+cuenta.getTotal());
+                    String sql = "INSERT INTO donaciones VALUES (?, ?, ?, ?, ?)";
 
                     PreparedStatement ps = connection.prepareStatement(sql);
 
@@ -249,6 +249,8 @@ public class MainGUI extends JFrame {
                     ps.setString(2, donante);
                     ps.setString(3, motivo);
                     ps.setDouble(4, monto);
+                    ps.setDate(5, Date.valueOf(LocalDate.now()));
+
                     int filasAfectadas = ps.executeUpdate();
                     if (filasAfectadas > 0) {
                         JOptionPane.showMessageDialog(null, "Donacion recibida exitosamente");
@@ -306,6 +308,7 @@ public class MainGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Enfermedades frameEnfermedades = new Enfermedades();
+                frameEnfermedades.setAlbergue(albergue);
                 frameEnfermedades.setVisible(true);
                 frameEnfermedades.show();
             }

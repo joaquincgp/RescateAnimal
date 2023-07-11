@@ -70,6 +70,7 @@ public class Albergue {
         return animalBuscado;
     }
 
+
     public boolean animalYaExiste(Animal animal) {
         for (Animal animalRescatado : animalesRescatados) {
             if (animalRescatado.getId().equals(animal.getId())) {

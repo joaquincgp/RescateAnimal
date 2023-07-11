@@ -18,6 +18,9 @@ public class CuentaAhorros {
     }
 
 
+    public double getTotal() {
+        return total;
+    }
 
     public List<Donacion> getDonaciones() {
         return donaciones;
