@@ -169,12 +169,30 @@ public class MainGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
+                    conectar();
                     String pacienteID = idpacienteField.getText();
                     String fechaAgenda = fechaCitaField.getText();
                     LocalDate fechaCita = LocalDate.parse(fechaAgenda, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                     String doctor = (String) comboBoxDoctor.getSelectedItem();
                     Doctor doctorAsignado = veterinaria.buscarDoctor(doctor);
                     Animal paciente = albergue.buscarAnimal(pacienteID);
+                    String nombrePaciente = paciente.getNombreAnimal();
+
+                    String sql = "INSERT INTO citas_programadas VALUES (?, ?, ?)";
+
+                    PreparedStatement ps = connection.prepareStatement(sql);
+                    ps.setDate(1, Date.valueOf(fechaCita));
+                    ps.setString(2, nombrePaciente);
+                    ps.setString(3, doctor);
+
+                    int filasAfectadas = ps.executeUpdate();
+                    if (filasAfectadas > 0) {
+                        JOptionPane.showMessageDialog(null, "Cita agendada correctamente");
+                        idpacienteField.setText("");
+                        fechaCitaField.setText("");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error al agendar cita", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                         if (doctorAsignado != null) {
                             if (!albergue.animalYaExiste(albergue.buscarAnimal(pacienteID))) {
                                 JOptionPane.showMessageDialog(MainGUI.this, "Error al agendar cita: El animal no pertenece al albergue", "Error", JOptionPane.ERROR_MESSAGE);
@@ -186,6 +204,8 @@ public class MainGUI extends JFrame {
                 }catch (DateTimeParseException ex){
                     JOptionPane.showMessageDialog(MainGUI.this, "Error al agendar cita: Hay algun(os) campo(s) vacio(s) o un formato no es valido", "Error", JOptionPane.ERROR_MESSAGE);
 
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
                 }
 
             }
@@ -239,10 +259,10 @@ public class MainGUI extends JFrame {
                     int filasAfectadas = ps.executeUpdate();
                     int filasAfectadas2 = ps2.executeUpdate();
 
-                    if (filasAfectadas > 0 && filasAfectadas2 > 0) {
+                    if (filasAfectadas > 0 || filasAfectadas2 > 0) {
                         JOptionPane.showMessageDialog(null, "Tablas limpiadas correctamente");
                     } else {
-                        JOptionPane.showMessageDialog(null, "Error al limpiar las tablas", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Error al limpiar las tablas. Las tablas no tienen datos!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
 
 
