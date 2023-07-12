@@ -12,11 +12,16 @@ public class Albergue {
      */
     private static final int CAPACIDAD_ALBERGUE = 40;
 
+    /**
+     * Lista de usuarios que han adoptado
+     */
+    private List<Persona> usuarios;
 
 
     public Albergue(){
         // Crea el arreglo de animales y lo inicializa
         animalesRescatados = new ArrayList<>();
+        usuarios = new ArrayList<>();
     }
     public void agregarAnimal(Animal animal) {
         if(animalYaExiste(animal)){

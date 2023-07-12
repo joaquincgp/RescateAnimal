@@ -19,14 +19,16 @@ public class Animal {
     private String pabellon;
     private Persona duenio;
     private Especie especie;
+    private String raza;
 
-    public Animal(String nombreAnimal, LocalDate fechaNacimiento, String id, String color, String pabellon,Especie especie) {
+    public Animal(String nombreAnimal, LocalDate fechaNacimiento, String id, String color, String pabellon,Especie especie, String raza) {
         this.nombreAnimal = nombreAnimal;
         this.fechaNacimiento = fechaNacimiento;
         this.id = id;
         this.color = color;
         this.pabellon = pabellon;
         this.especie = especie;
+        this.raza = raza;
     }
 
     public String getNombreAnimal() {
@@ -39,6 +41,10 @@ public class Animal {
 
     public Historial getPerfilMedico() {
         return perfilMedico;
+    }
+
+    public String getRaza() {
+        return raza;
     }
 
     public void setPerfilMedico(Historial perfilMedico) {

@@ -36,6 +36,7 @@ public class MainGUI extends JFrame {
     private JButton limpiarBaseDeDatosButton;
     private JButton historialesButton;
     private JTextField motivoTextField;
+    private JTextField razaTextField;
     private JButton nuestrosPequeñosButton;
     private JTextArea listaAnimales;
     private Albergue albergue = new Albergue();
@@ -56,16 +57,20 @@ public class MainGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-            MainGUI panel = new MainGUI();
-            panel.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Cambio en esta línea
-            panel.setContentPane(panel.panelPrincipal);
-            panel.setSize(1900, 1000);
-            panel.setVisible(true);
+
+
     }
 
 
 
     public MainGUI() {
+        setTitle("Sistema de albergue");
+        setSize(1900, 1000);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Cambio en esta línea
+        setContentPane(panelPrincipal);
+        setResizable(false);
+        pack(); // Ajusta automáticamente el tamaño del JFrame según su contenido
+        setLocationRelativeTo(null); // Centra el JFrame en la pantalla
         botonInscribir.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -77,10 +82,12 @@ public class MainGUI extends JFrame {
                     String especieTexto = especieField.getText().toUpperCase();
                     String colorAnimal = colorField.getText();
                     String pabellon = pabellonField.getText().toLowerCase();
+                    String raza = razaTextField.getText();
                     LocalDate fechaNacimiento = LocalDate.parse(inputFecha, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                    LocalDate fechaActual = LocalDate.now();
 
 
-                    String sql = "INSERT INTO animales_rescatados VALUES (?, ?, ?, ?, ?, ?)";
+                    String sql = "INSERT INTO animales_rescatados VALUES (?, ?, ?, ?, ?, ?,?)";
                     PreparedStatement ps = connection.prepareStatement(sql);
                     ps.setString(1, nombreAnimal);
                     ps.setDate(2, Date.valueOf(fechaNacimiento));
@@ -88,6 +95,7 @@ public class MainGUI extends JFrame {
                     ps.setString(4, colorField.getText());
                     ps.setString(5, pabellonField.getText());
                     ps.setString(6, especieField.getText());
+                    ps.setString(7, razaTextField.getText());
 
                     int filasAfectadas = ps.executeUpdate();
                     if (filasAfectadas > 0) {
@@ -98,22 +106,27 @@ public class MainGUI extends JFrame {
                         especieField.setText("");
                         colorField.setText("");
                         pabellonField.setText("");
+                        razaTextField.setText("");
                     } else {
                         JOptionPane.showMessageDialog(null, "Error al inscribir el animal", "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                    if (nombreAnimal.isEmpty() || inputFecha.isEmpty() || idAnimal.isEmpty() || especieTexto.isEmpty() || colorAnimal.isEmpty() || pabellon.isEmpty()) {
+                    if (nombreAnimal.isEmpty() || inputFecha.isEmpty() || idAnimal.isEmpty() || especieTexto.isEmpty() || colorAnimal.isEmpty() || pabellon.isEmpty() || raza.isEmpty()) {
                         throw new CampoVacioException("Algun campo esta vacio");
+                    } else  if (fechaNacimiento.isAfter(fechaActual)) {
+                        throw new FechaInvalidaException("La fecha de nacimiento debe ser menor a la fecha actual");
+                    } else{
+                        Animal.Especie especieAnimal = Animal.Especie.valueOf(especieTexto);
+                        Animal animalRegistrado = new Animal(nombreAnimal, fechaNacimiento, idAnimal, colorAnimal, pabellon, especieAnimal, raza);
+                        albergue.agregarAnimal(animalRegistrado);
                     }
-                    Animal.Especie especieAnimal = Animal.Especie.valueOf(especieTexto);
-                    Animal animalRegistrado = new Animal(nombreAnimal, fechaNacimiento, idAnimal, colorAnimal, pabellon, especieAnimal);
-                    albergue.agregarAnimal(animalRegistrado);
-                } catch (CampoVacioException ex) {
+
+                } catch (CampoVacioException | DateTimeParseException ex) {
                     JOptionPane.showMessageDialog(null, "Error al registrar animalito: Hay algun(os) campo(s) vacio(s) o un formato no es valido", "Error", JOptionPane.ERROR_MESSAGE);
-                } catch (DateTimeParseException ex) {
-                    JOptionPane.showMessageDialog(null, "Error al registrar animalito: Formato de fecha incorrecto", "Error", JOptionPane.ERROR_MESSAGE);
-                } catch (SQLException ex) {
+                }  catch (SQLException ex) {
                     JOptionPane.showMessageDialog(null, "Error al inscribir el animal: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     ex.printStackTrace();
+                } catch (FechaInvalidaException ex) {
+                    JOptionPane.showMessageDialog(null, "La fecha de nacimiento no puede ser mayor a la actual: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
