@@ -25,7 +25,7 @@ public class Albergue {
     }
     public void agregarAnimal(Animal animal) {
         if(animalYaExiste(animal)){
-            JOptionPane.showMessageDialog(null,"El animalito ya esta registrado");
+            JOptionPane.showMessageDialog(null,"El animal ya esta registrado");
         }else{
             if (hayEspacioDisponible()) {
                 animalesRescatados.add(animal);

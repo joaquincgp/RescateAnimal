@@ -1,3 +1,8 @@
+import Exceptions.CampoVacioException;
+import Exceptions.CaracteresNoValidosException;
+import Exceptions.FechaInvalidaException;
+import Exceptions.NoExisteException;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,7 +55,6 @@ public class MainGUI extends JFrame {
         try{
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root","root", "joaquincgp");
             connection.createStatement().execute("USE albergue");
-            JOptionPane.showMessageDialog(MainGUI.this, "Conectado a la base de datos");
         }catch (SQLException e){
             throw new RuntimeException(e);
         }
@@ -86,38 +90,43 @@ public class MainGUI extends JFrame {
                     LocalDate fechaNacimiento = LocalDate.parse(inputFecha, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                     LocalDate fechaActual = LocalDate.now();
 
+                    String caracteresPermitidos = "^[a-zA-Z]+$";
 
-                    String sql = "INSERT INTO animales_rescatados VALUES (?, ?, ?, ?, ?, ?,?)";
-                    PreparedStatement ps = connection.prepareStatement(sql);
-                    ps.setString(1, nombreAnimal);
-                    ps.setDate(2, Date.valueOf(fechaNacimiento));
-                    ps.setString(3, idField.getText());
-                    ps.setString(4, colorField.getText());
-                    ps.setString(5, pabellonField.getText());
-                    ps.setString(6, especieField.getText());
-                    ps.setString(7, razaTextField.getText());
-
-                    int filasAfectadas = ps.executeUpdate();
-                    if (filasAfectadas > 0) {
-                        JOptionPane.showMessageDialog(null, "Animal inscrito correctamente");
-                        nombreInscripcionlField.setText("");
-                        fechaNacimientoField.setText("");
-                        idField.setText("");
-                        especieField.setText("");
-                        colorField.setText("");
-                        pabellonField.setText("");
-                        razaTextField.setText("");
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Error al inscribir el animal", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
                     if (nombreAnimal.isEmpty() || inputFecha.isEmpty() || idAnimal.isEmpty() || especieTexto.isEmpty() || colorAnimal.isEmpty() || pabellon.isEmpty() || raza.isEmpty()) {
                         throw new CampoVacioException("Algun campo esta vacio");
                     } else  if (fechaNacimiento.isAfter(fechaActual)) {
                         throw new FechaInvalidaException("La fecha de nacimiento debe ser menor a la fecha actual");
+                    } else if (!nombreAnimal.matches(caracteresPermitidos) || !colorAnimal.matches(caracteresPermitidos) || !pabellon.matches(caracteresPermitidos) || !raza.matches(caracteresPermitidos)){
+                        throw new CaracteresNoValidosException("Caracteres incorrectos");
+                    } else if (!pabellon.equals("a") && !pabellon.equals("b")) {
+                        throw new NoExisteException("No existe el pabellon");
                     } else{
                         Animal.Especie especieAnimal = Animal.Especie.valueOf(especieTexto);
                         Animal animalRegistrado = new Animal(nombreAnimal, fechaNacimiento, idAnimal, colorAnimal, pabellon, especieAnimal, raza);
                         albergue.agregarAnimal(animalRegistrado);
+                        String sql = "INSERT INTO animales_rescatados VALUES (?, ?, ?, ?, ?, ?,?)";
+                        PreparedStatement ps = connection.prepareStatement(sql);
+                        ps.setString(1, nombreAnimal);
+                        ps.setDate(2, Date.valueOf(fechaNacimiento));
+                        ps.setString(3, idField.getText());
+                        ps.setString(4, colorField.getText());
+                        ps.setString(5, pabellonField.getText());
+                        ps.setString(6, especieField.getText());
+                        ps.setString(7, razaTextField.getText());
+
+                        int filasAfectadas = ps.executeUpdate();
+                        if (filasAfectadas > 0) {
+                            JOptionPane.showMessageDialog(null, "Animal inscrito correctamente");
+                            nombreInscripcionlField.setText("");
+                            fechaNacimientoField.setText("");
+                            idField.setText("");
+                            especieField.setText("");
+                            colorField.setText("");
+                            pabellonField.setText("");
+                            razaTextField.setText("");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Error al inscribir el animal", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
 
                 } catch (CampoVacioException | DateTimeParseException ex) {
@@ -127,6 +136,10 @@ public class MainGUI extends JFrame {
                     ex.printStackTrace();
                 } catch (FechaInvalidaException ex) {
                     JOptionPane.showMessageDialog(null, "La fecha de nacimiento no puede ser mayor a la actual: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (CaracteresNoValidosException ex) {
+                    JOptionPane.showMessageDialog(null, "Algun campo contiene datos inadmisibles: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (NoExisteException ex) {
+                    JOptionPane.showMessageDialog(null, "No existe el pabellon, eliga entre A o B", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });

@@ -1,5 +1,7 @@
-public class CampoVacioException extends Exception{
-    public CampoVacioException(String mensaje){
+package Exceptions;
+
+public class NoExisteException extends Exception{
+    public NoExisteException(String mensaje){
         super(mensaje);
     }
 
