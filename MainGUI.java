@@ -1,7 +1,4 @@
-import Exceptions.CampoVacioException;
-import Exceptions.CaracteresNoValidosException;
-import Exceptions.FechaInvalidaException;
-import Exceptions.NoExisteException;
+import Exceptions.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -103,6 +100,9 @@ public class MainGUI extends JFrame {
                     } else{
                         Animal.Especie especieAnimal = Animal.Especie.valueOf(especieTexto);
                         Animal animalRegistrado = new Animal(nombreAnimal, fechaNacimiento, idAnimal, colorAnimal, pabellon, especieAnimal, raza);
+                        if(albergue.animalYaExiste(animalRegistrado)){
+                            throw new YaExisteException("Animal ya existe en la base de datos");
+                        }
                         albergue.agregarAnimal(animalRegistrado);
                         String sql = "INSERT INTO animales_rescatados VALUES (?, ?, ?, ?, ?, ?,?)";
                         PreparedStatement ps = connection.prepareStatement(sql);
@@ -140,6 +140,8 @@ public class MainGUI extends JFrame {
                     JOptionPane.showMessageDialog(null, "Algun campo contiene datos inadmisibles: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 } catch (NoExisteException ex) {
                     JOptionPane.showMessageDialog(null, "No existe el pabellon, eliga entre A o B", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (YaExisteException ex) {
+                    JOptionPane.showMessageDialog(null, "Ya existe el animal", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
