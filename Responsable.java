@@ -6,11 +6,11 @@ public class Responsable extends JFrame {
 
     private JPanel panelResponsable;
     private JTextField nombreResponsable;
-    private JTextField textField2;
-    private JTextField textField3;
-    private JComboBox comboBox1;
-    private JTextField textField4;
-    private JTextField textField5;
+    private JTextField cedulaField;
+    private JTextField celularField;
+    private JComboBox generoComboBox;
+    private JTextField direccionField;
+    private JTextField correoField;
     private JButton enviarButton;
 
     public Responsable() {
@@ -29,4 +29,31 @@ public class Responsable extends JFrame {
         });
     }
 
+    public JTextField getNombreResponsable() {
+        return nombreResponsable;
+    }
+
+    public JTextField getCedulaField() {
+        return cedulaField;
+    }
+
+    public JTextField getCelularField() {
+        return celularField;
+    }
+
+    public JPanel getPanelResponsable() {
+        return panelResponsable;
+    }
+
+    public JComboBox getGeneroComboBox() {
+        return generoComboBox;
+    }
+
+    public JTextField getDireccionField() {
+        return direccionField;
+    }
+
+    public JTextField getCorreoField() {
+        return correoField;
+    }
 }

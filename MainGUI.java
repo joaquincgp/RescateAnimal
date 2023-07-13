@@ -161,17 +161,19 @@ public class MainGUI extends JFrame {
                 try {
                     conectar();
                     String idAdopcion = idAdopcionField.getText();
-                    if(albergue.buscarAnimal(idAdopcion)!= null){
-
+                    if(albergue.buscarAnimal(idAdopcion)== null){
+                        JOptionPane.showMessageDialog(MainGUI.this, "El animal no existe o ya fue adoptado", "Error", JOptionPane.ERROR_MESSAGE);
+                    }else{
+                        Responsable dialogResponsable = new Responsable();
+                        dialogResponsable.setVisible(true);
+                        String nombreAdoptante = dialogResponsable.getNombreResponsable().getText(); //usar text field de Responsable
+                        String celularAdoptante = celularResponsableField.getText();
+                        String cedulaAdoptante = cedulaField.getText();
+                        String correoAdoptante = correoField.getText();
+                        String direccionAdoptante = direccionField.getText();
+                        String generoAdoptante = (String)comboBoxSexo.getSelectedItem();
                     }
-                    Responsable dialogResponsable = new Responsable();
-                    dialogResponsable.setVisible(true);
-                    String nombreAdoptante = nombreResponsable.getText(); //usar text field de Responsable
-                    String celularAdoptante = celularResponsableField.getText();
-                    String cedulaAdoptante = cedulaField.getText();
-                    String correoAdoptante = correoField.getText();
-                    String direccionAdoptante = direccionField.getText();
-                    String generoAdoptante = (String)comboBoxSexo.getSelectedItem();
+
 
 
 
