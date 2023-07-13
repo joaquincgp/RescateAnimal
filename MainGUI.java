@@ -167,23 +167,19 @@ public class MainGUI extends JFrame {
                         Responsable dialogResponsable = new Responsable();
                         dialogResponsable.setVisible(true);
                         String nombreAdoptante = dialogResponsable.getNombreResponsable().getText(); //usar text field de Responsable
-                        String celularAdoptante = celularResponsableField.getText();
-                        String cedulaAdoptante = cedulaField.getText();
-                        String correoAdoptante = correoField.getText();
-                        String direccionAdoptante = direccionField.getText();
-                        String generoAdoptante = (String)comboBoxSexo.getSelectedItem();
+                        String celularAdoptante = dialogResponsable.getCelularField().getText();
+                        String cedulaAdoptante = dialogResponsable.getCedulaField().getText();
+                        String correoAdoptante = dialogResponsable.getCorreoField().getText();
+                        String direccionAdoptante = dialogResponsable.getDireccionField().getText();
+                        String generoAdoptante = (String)dialogResponsable.getGeneroComboBox().getSelectedItem();
+
+                        String sql = "INSERT INTO animales_adoptados VALUES (?, ?, ?, ?)";
+                        PreparedStatement ps = connection.prepareStatement(sql);
+                        ps.setString(1, albergue.buscarAnimal(idAdopcion).getNombreAnimal());
+                        ps.setString(2, idAdopcion);
+                        ps.setString(3, nombreAdoptante);
+                        ps.setString(4, celularAdoptante);
                     }
-
-
-
-
-
-                    String sql = "INSERT INTO animales_adoptados VALUES (?, ?, ?, ?)";
-                    PreparedStatement ps = connection.prepareStatement(sql);
-                    ps.setString(1, albergue.buscarAnimal(idAdopcion).getNombreAnimal());
-                    ps.setString(2, idAdopcion);
-                    ps.setString(3, nombreAdoptante);
-                    ps.setString(4, celularAdoptante);
 
                     int filasAfectadas = ps.executeUpdate();
                     if (filasAfectadas > 0) {
