@@ -7,6 +7,7 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Random;
 
 public class MainGUI extends JFrame {
     private JTextField nombreInscripcionlField;
@@ -39,7 +40,7 @@ public class MainGUI extends JFrame {
     private JButton historialesButton;
     private JTextField motivoTextField;
     private JTextField razaTextField;
-    private JButton nuestrosPequeñosButton;
+    private JButton nuestrosPequenosButton;
     private JTextArea listaAnimales;
     private Albergue albergue = new Albergue();
     private Veterinaria veterinaria = new Veterinaria();
@@ -47,6 +48,7 @@ public class MainGUI extends JFrame {
 
     Connection connection;
     //PreparedStatement ps;
+
 
     public void conectar(){
         try{
@@ -56,13 +58,6 @@ public class MainGUI extends JFrame {
             throw new RuntimeException(e);
         }
     }
-
-    public static void main(String[] args) {
-
-
-    }
-
-
 
     public MainGUI() {
         setTitle("Sistema de albergue");
@@ -79,7 +74,11 @@ public class MainGUI extends JFrame {
                     conectar();
                     String nombreAnimal = nombreInscripcionlField.getText();
                     String inputFecha = fechaNacimientoField.getText();
-                    String idAnimal = idField.getText();
+                    //Id unico para cada animal ingresado
+                    Random random = new Random();
+                    int codigo = random.nextInt(9000) + 1000; // Genera un número aleatorio entre 1000 y 9999
+                    String idAnimal = String.valueOf(codigo);
+
                     String especieTexto = especieField.getText().toUpperCase();
                     String colorAnimal = colorField.getText();
                     String pabellon = pabellonField.getText().toLowerCase();
@@ -97,6 +96,13 @@ public class MainGUI extends JFrame {
                         throw new CaracteresNoValidosException("Caracteres incorrectos");
                     } else if (!pabellon.equals("a") && !pabellon.equals("b")) {
                         throw new NoExisteException("No existe el pabellon");
+                    } else if (pabellon.equals("a") && especieTexto.equals("GATO")) {
+                        throw new PabellonIncorrectoException("Pabellon incorrecto");
+                    } else if (pabellon.equals("b") && especieTexto.equals("PERRO")) {
+                        throw new PabellonIncorrectoException("Pabellon incorrecto");
+                    } else if (!especieTexto.equals("PERRO") && !especieTexto.equals("GATO")) {
+                        throw new NoExisteCategoriaException("No existe categoria");
+
                     } else{
                         Animal.Especie especieAnimal = Animal.Especie.valueOf(especieTexto);
                         Animal animalRegistrado = new Animal(nombreAnimal, fechaNacimiento, idAnimal, colorAnimal, pabellon, especieAnimal, raza);
@@ -108,7 +114,7 @@ public class MainGUI extends JFrame {
                         PreparedStatement ps = connection.prepareStatement(sql);
                         ps.setString(1, nombreAnimal);
                         ps.setDate(2, Date.valueOf(fechaNacimiento));
-                        ps.setString(3, idField.getText());
+                        ps.setString(3, idAnimal);
                         ps.setString(4, colorField.getText());
                         ps.setString(5, pabellonField.getText());
                         ps.setString(6, especieField.getText());
@@ -119,7 +125,6 @@ public class MainGUI extends JFrame {
                             JOptionPane.showMessageDialog(null, "Animal inscrito correctamente");
                             nombreInscripcionlField.setText("");
                             fechaNacimientoField.setText("");
-                            idField.setText("");
                             especieField.setText("");
                             colorField.setText("");
                             pabellonField.setText("");
@@ -142,6 +147,10 @@ public class MainGUI extends JFrame {
                     JOptionPane.showMessageDialog(null, "No existe el pabellon, eliga entre A o B", "Error", JOptionPane.ERROR_MESSAGE);
                 } catch (YaExisteException ex) {
                     JOptionPane.showMessageDialog(null, "Ya existe el animal", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (NoExisteCategoriaException ex) {
+                    JOptionPane.showMessageDialog(null, "Solo aceptamos Gatos o Perros", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (PabellonIncorrectoException ex) {
+                    JOptionPane.showMessageDialog(null, "El animal no puede estar en este pabellon", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -152,12 +161,20 @@ public class MainGUI extends JFrame {
                 try {
                     conectar();
                     String idAdopcion = idAdopcionField.getText();
-                    String nombreAdoptante = nombreResponsableField.getText();
+                    if(albergue.buscarAnimal(idAdopcion)!= null){
+
+                    }
+                    Responsable dialogResponsable = new Responsable();
+                    dialogResponsable.setVisible(true);
+                    String nombreAdoptante = nombreResponsable.getText(); //usar text field de Responsable
                     String celularAdoptante = celularResponsableField.getText();
                     String cedulaAdoptante = cedulaField.getText();
                     String correoAdoptante = correoField.getText();
                     String direccionAdoptante = direccionField.getText();
                     String generoAdoptante = (String)comboBoxSexo.getSelectedItem();
+
+
+
 
                     String sql = "INSERT INTO animales_adoptados VALUES (?, ?, ?, ?)";
                     PreparedStatement ps = connection.prepareStatement(sql);
