@@ -36,6 +36,19 @@ public class Albergue {
         }
 
     }
+
+    /**
+     * Registra un usuario
+     * @param cedula del adoptante
+     */
+    public void registrarUsuario(String cedula){
+        if(buscarUsuario(cedula) != null){
+            usuarios.add(buscarUsuario(cedula));
+        }else{
+            JOptionPane.showMessageDialog(null, "El usuario no existe", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+    }
     public void adoptarAnimal(Animal animal) {
         Animal animalBuscado = buscarAnimal(animal.getId());
         if (animalBuscado!= null) {
@@ -74,7 +87,25 @@ public class Albergue {
         }
         return animalBuscado;
     }
+    public Persona buscarUsuario(String pCedula){
+        Persona usuarioBuscado = null;
 
+        boolean encontre = false;
+        int numeroUsuarios = usuarios.size( );
+        for( int i = 0; i < numeroUsuarios && !encontre; i++ )
+        {
+            Persona p = usuarios.get( i );
+            if( p.getCedula().equals( pCedula ) )
+            {
+                usuarioBuscado= p;
+                encontre = true;
+            }
+        }
+        if(!encontre){
+            JOptionPane.showMessageDialog(null, "El usuario no existe");
+        }
+        return usuarioBuscado;
+    }
 
     public boolean animalYaExiste(Animal animal) {
         for (Animal animalRescatado : animalesRescatados) {

@@ -7,6 +7,8 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class MainGUI extends JFrame {
@@ -41,6 +43,7 @@ public class MainGUI extends JFrame {
     private JTextField motivoTextField;
     private JTextField razaTextField;
     private JButton nuestrosPequenosButton;
+    private JComboBox comboBoxEspecie;
     private JTextArea listaAnimales;
     private Albergue albergue = new Albergue();
     private Veterinaria veterinaria = new Veterinaria();
@@ -58,6 +61,8 @@ public class MainGUI extends JFrame {
             throw new RuntimeException(e);
         }
     }
+
+
 
     public MainGUI() {
         setTitle("Sistema de albergue");
@@ -79,18 +84,19 @@ public class MainGUI extends JFrame {
                     int codigo = random.nextInt(9000) + 1000; // Genera un número aleatorio entre 1000 y 9999
                     String idAnimal = String.valueOf(codigo);
 
-                    String especieTexto = especieField.getText().toUpperCase();
+                    String especieTexto = (String)(comboBoxEspecie.getSelectedItem());
+                    especieTexto = especieTexto.toUpperCase();
                     String colorAnimal = colorField.getText();
                     String pabellon = pabellonField.getText().toLowerCase();
                     String raza = razaTextField.getText();
-                    LocalDate fechaNacimiento = LocalDate.parse(inputFecha, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                    LocalDate fechaLlegada = LocalDate.parse(inputFecha, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                     LocalDate fechaActual = LocalDate.now();
 
                     String caracteresPermitidos = "^[a-zA-Z]+$";
 
                     if (nombreAnimal.isEmpty() || inputFecha.isEmpty() || idAnimal.isEmpty() || especieTexto.isEmpty() || colorAnimal.isEmpty() || pabellon.isEmpty() || raza.isEmpty()) {
                         throw new CampoVacioException("Algun campo esta vacio");
-                    } else  if (fechaNacimiento.isAfter(fechaActual)) {
+                    } else  if (fechaLlegada.isAfter(fechaActual)) {
                         throw new FechaInvalidaException("La fecha de nacimiento debe ser menor a la fecha actual");
                     } else if (!nombreAnimal.matches(caracteresPermitidos) || !colorAnimal.matches(caracteresPermitidos) || !pabellon.matches(caracteresPermitidos) || !raza.matches(caracteresPermitidos)){
                         throw new CaracteresNoValidosException("Caracteres incorrectos");
@@ -105,19 +111,20 @@ public class MainGUI extends JFrame {
 
                     } else{
                         Animal.Especie especieAnimal = Animal.Especie.valueOf(especieTexto);
-                        Animal animalRegistrado = new Animal(nombreAnimal, fechaNacimiento, idAnimal, colorAnimal, pabellon, especieAnimal, raza);
+                        Animal animalRegistrado = new Animal(nombreAnimal, fechaLlegada, idAnimal, colorAnimal, pabellon, especieAnimal, raza);
                         if(albergue.animalYaExiste(animalRegistrado)){
                             throw new YaExisteException("Animal ya existe en la base de datos");
                         }
                         albergue.agregarAnimal(animalRegistrado);
+                        animalRegistrado.setId(idAnimal);
                         String sql = "INSERT INTO animales_rescatados VALUES (?, ?, ?, ?, ?, ?,?)";
                         PreparedStatement ps = connection.prepareStatement(sql);
                         ps.setString(1, nombreAnimal);
-                        ps.setDate(2, Date.valueOf(fechaNacimiento));
+                        ps.setDate(2, Date.valueOf(fechaLlegada));
                         ps.setString(3, idAnimal);
                         ps.setString(4, colorField.getText());
-                        ps.setString(5, pabellonField.getText());
-                        ps.setString(6, especieField.getText());
+                        ps.setString(5, pabellonField.getText().toUpperCase());
+                        ps.setString(6, especieTexto);
                         ps.setString(7, razaTextField.getText());
 
                         int filasAfectadas = ps.executeUpdate();
@@ -125,7 +132,6 @@ public class MainGUI extends JFrame {
                             JOptionPane.showMessageDialog(null, "Animal inscrito correctamente");
                             nombreInscripcionlField.setText("");
                             fechaNacimientoField.setText("");
-                            especieField.setText("");
                             colorField.setText("");
                             pabellonField.setText("");
                             razaTextField.setText("");
@@ -140,7 +146,7 @@ public class MainGUI extends JFrame {
                     JOptionPane.showMessageDialog(null, "Error al inscribir el animal: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     ex.printStackTrace();
                 } catch (FechaInvalidaException ex) {
-                    JOptionPane.showMessageDialog(null, "La fecha de nacimiento no puede ser mayor a la actual: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "La fecha de recibimiento no puede ser mayor a la actual: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 } catch (CaracteresNoValidosException ex) {
                     JOptionPane.showMessageDialog(null, "Algun campo contiene datos inadmisibles: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 } catch (NoExisteException ex) {
@@ -159,56 +165,25 @@ public class MainGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    conectar();
                     String idAdopcion = idAdopcionField.getText();
-                    if(albergue.buscarAnimal(idAdopcion)== null){
+                    if (idAdopcionField.getText().isEmpty()) {
+                        throw new CampoVacioException("Campo Vacio");
+                    }
+                    if (albergue.buscarAnimal(idAdopcion) == null) {
                         JOptionPane.showMessageDialog(MainGUI.this, "El animal no existe o ya fue adoptado", "Error", JOptionPane.ERROR_MESSAGE);
-                    }else{
+                    } else {
                         Responsable dialogResponsable = new Responsable();
                         dialogResponsable.setVisible(true);
-                        String nombreAdoptante = dialogResponsable.getNombreResponsable().getText(); //usar text field de Responsable
-                        String celularAdoptante = dialogResponsable.getCelularField().getText();
-                        String cedulaAdoptante = dialogResponsable.getCedulaField().getText();
-                        String correoAdoptante = dialogResponsable.getCorreoField().getText();
-                        String direccionAdoptante = dialogResponsable.getDireccionField().getText();
-                        String generoAdoptante = (String)dialogResponsable.getGeneroComboBox().getSelectedItem();
-
-                        String sql = "INSERT INTO animales_adoptados VALUES (?, ?, ?, ?)";
-                        PreparedStatement ps = connection.prepareStatement(sql);
-                        ps.setString(1, albergue.buscarAnimal(idAdopcion).getNombreAnimal());
-                        ps.setString(2, idAdopcion);
-                        ps.setString(3, nombreAdoptante);
-                        ps.setString(4, celularAdoptante);
+                        dialogResponsable.setIdAdopcion(idAdopcion);
+                        dialogResponsable.setAlbergue(albergue);
                     }
-
-                    int filasAfectadas = ps.executeUpdate();
-                    if (filasAfectadas > 0) {
-                        JOptionPane.showMessageDialog(null, "Animal adoptado correctamente");
-                        nombreResponsableField.setText("");
-                        celularResponsableField.setText("");
-                        cedulaField.setText("");
-                        correoField.setText("");
-                        direccionField.setText("");
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Error al adoptar el animal", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-
-                    if (idAdopcion.isEmpty() || nombreAdoptante.isEmpty() || cedulaAdoptante.isEmpty() || celularAdoptante.isEmpty() || correoAdoptante.isEmpty() ||direccionAdoptante.isEmpty()) {
-                        throw new CampoVacioException("Algun campo esta vacio");
-                    }else{
-                        Animal animalAdoptado = albergue.buscarAnimal(idAdopcion);
-                        Persona nuevoDuenio = new Persona(nombreAdoptante, celularAdoptante, cedulaAdoptante, correoAdoptante, generoAdoptante, direccionAdoptante );
-                        albergue.adoptarAnimal(animalAdoptado);
-                        animalAdoptado.setDuenio(nuevoDuenio);
-                        JOptionPane.showMessageDialog(MainGUI.this,"Gracias a ti "+nuevoDuenio.getNombrePersona()+" ahora "+ animalAdoptado.getNombreAnimal()+" encontro un nuevo hogar!", "Gracias", JOptionPane.INFORMATION_MESSAGE);
-                    }
-                }catch (CampoVacioException ex){
-                    JOptionPane.showMessageDialog(MainGUI.this, "Error al adoptar animalito: Hay algun(os) campo(s) vacio(s) o un formato no es valido", "Error", JOptionPane.ERROR_MESSAGE);
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
+                } catch (CampoVacioException ex) {
+                    JOptionPane.showMessageDialog(MainGUI.this, "El campo de ID esta vacio", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
+
+
         agendarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -354,6 +329,14 @@ public class MainGUI extends JFrame {
                 frameEnfermedades.setAlbergue(albergue);
                 frameEnfermedades.setVisible(true);
                 frameEnfermedades.show();
+            }
+        });
+        nuestrosPequenosButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                List<Animal> animales = albergue.getListaAnimalesRescatados();
+                NuestrosPequenos pequenos = new NuestrosPequenos(animales);
+                pequenos.setVisible(true);
             }
         });
     }

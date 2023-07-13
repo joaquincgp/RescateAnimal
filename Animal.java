@@ -12,7 +12,7 @@ public class Animal {
         PERRO
     }
     private String nombreAnimal;
-    private LocalDate fechaNacimiento;
+    private LocalDate fechaLlegada;
     private Historial perfilMedico;
     private String id;
     private String color;
@@ -21,9 +21,9 @@ public class Animal {
     private Especie especie;
     private String raza;
 
-    public Animal(String nombreAnimal, LocalDate fechaNacimiento, String id, String color, String pabellon,Especie especie, String raza) {
+    public Animal(String nombreAnimal, LocalDate fechaLlegada, String id, String color, String pabellon,Especie especie, String raza) {
         this.nombreAnimal = nombreAnimal;
-        this.fechaNacimiento = fechaNacimiento;
+        this.fechaLlegada = fechaLlegada;
         this.id = id;
         this.color = color;
         this.pabellon = pabellon;
@@ -35,8 +35,8 @@ public class Animal {
         return nombreAnimal;
     }
 
-    public LocalDate getFechaNacimiento() {
-        return fechaNacimiento;
+    public LocalDate getFechaLlegada() {
+        return fechaLlegada;
     }
 
     public Historial getPerfilMedico() {
@@ -75,5 +75,7 @@ public class Animal {
         this.duenio = duenio;
     }
 
-
+    public void setId(String id) {
+        this.id = id;
+    }
 }

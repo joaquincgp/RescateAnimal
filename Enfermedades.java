@@ -15,6 +15,7 @@ public class Enfermedades extends JFrame {
     private JTextField desparacitacionTextField;
     private JTextField idHistorialTextField;
     private Albergue albergue;
+
     public void setAlbergue(Albergue albergue) {
         this.albergue = albergue;
     }
