@@ -5,7 +5,6 @@ public class Persona {
     private String correo;
     private String genero;
     private String direccion;
-    private Animal adopcion;
 
 
     public Persona(String nombrePersona, String celular, String cedula, String correo, String genero, String direccion) {
@@ -39,10 +38,6 @@ public class Persona {
 
     public String getDireccion() {
         return direccion;
-    }
-
-    public Animal getAdopcion() {
-        return adopcion;
     }
 
 

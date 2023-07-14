@@ -103,14 +103,21 @@ public class Responsable extends JFrame {
                     JOptionPane.showMessageDialog(null,"Gracias a ti, "+nuevoDuenio.getNombrePersona()+", ahora "+ animalAdoptado.getNombreAnimal()+" encontro un nuevo hogar!", "Gracias", JOptionPane.INFORMATION_MESSAGE);
                     String sql = "INSERT INTO animales_adoptados VALUES (?, ?, ?, ?, ?)";
 
+
+
                     PreparedStatement ps = connection.prepareStatement(sql);
                     ps.setString(1, albergue.buscarAnimal(idAdopcion).getNombreAnimal());
                     ps.setString(2, albergue.buscarAnimal(idAdopcion).getId());
-                    ps.setString(3, String.valueOf(albergue.buscarAnimal(idAdopcion).getDuenio()));
+                    ps.setString(3, albergue.buscarAnimal(idAdopcion).getDuenio().getNombrePersona());
                     ps.setString(4, celularAdoptante);
                     ps.setString(5, cedulaAdoptante);
 
+                    String sql2 = "DELETE FROM animales_rescatados WHERE id_animal = ?";
+                    PreparedStatement ps2 = connection.prepareStatement(sql2);
+                    ps2.setString(1, idAdopcion);
                     albergue.adoptarAnimal(animalAdoptado);
+
+                    int filasAfectadas2 = ps2.executeUpdate();
                     int filasAfectadas = ps.executeUpdate();
                     if (filasAfectadas > 0) {
                         JOptionPane.showMessageDialog(null, "Animal adoptado correctamente");
@@ -119,6 +126,7 @@ public class Responsable extends JFrame {
                         cedulaField.setText("");
                         correoField.setText("");
                         direccionField.setText("");
+                        dispose();
                     } else {
                         JOptionPane.showMessageDialog(null, "Error al adoptar el animal", "Error", JOptionPane.ERROR_MESSAGE);
                     }

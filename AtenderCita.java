@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Enfermedades extends JFrame {
+public class AtenderCita extends JFrame {
     private JPanel panelEnfermedades;
     private JTextField enfermedadesField1;
     private JTextField pesoTextField;
@@ -21,7 +21,7 @@ public class Enfermedades extends JFrame {
     }
 
 
-public Enfermedades() {
+public AtenderCita() {
     setTitle("Perfil medico"); // Establece el título del JFrame
     setSize(400, 600);
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Cambio en esta línea
@@ -52,7 +52,7 @@ public Enfermedades() {
                     vacunas.add(vacuna);
                     Historial historialNuevo = new Historial(enfermedades, pesoString, vacunas);
                     animalHistorial.setPerfilMedico(historialNuevo);
-                    JOptionPane.showMessageDialog(Enfermedades.this, "La informacion de "+animalHistorial.getNombreAnimal()+" fue actualizada correctamente");
+                    JOptionPane.showMessageDialog(AtenderCita.this, "La informacion de "+animalHistorial.getNombreAnimal()+" fue actualizada correctamente");
                 }
             }catch(CampoVacioException ex){
                 JOptionPane.showMessageDialog(null, "Algun campo esta vacio");

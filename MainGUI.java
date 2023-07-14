@@ -1,13 +1,13 @@
 import Exceptions.*;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -37,14 +37,16 @@ public class MainGUI extends JFrame {
     private JTextField donanteField;
     private JTextField montoField;
     private JComboBox comboBoxSexo;
-    private JButton cancelarCitaButton;
+    private JButton atenderCitaButton;
     private JButton limpiarBaseDeDatosButton;
     private JButton historialesButton;
     private JTextField motivoTextField;
     private JTextField razaTextField;
     private JButton nuestrosPequenosButton;
     private JComboBox comboBoxEspecie;
+    private JTextPane panelLista;
     private JTextArea listaAnimales;
+    private JScrollPane scrollPaneAnimales;
     private Albergue albergue = new Albergue();
     private Veterinaria veterinaria = new Veterinaria();
     private CuentaAhorros cuenta = new CuentaAhorros();
@@ -170,7 +172,7 @@ public class MainGUI extends JFrame {
                         throw new CampoVacioException("Campo Vacio");
                     }
                     if (albergue.buscarAnimal(idAdopcion) == null) {
-                        JOptionPane.showMessageDialog(MainGUI.this, "El animal no existe o ya fue adoptado", "Error", JOptionPane.ERROR_MESSAGE);
+                        throw new NoExisteException("Animal no existe");
                     } else {
                         Responsable dialogResponsable = new Responsable();
                         dialogResponsable.setVisible(true);
@@ -179,6 +181,8 @@ public class MainGUI extends JFrame {
                     }
                 } catch (CampoVacioException ex) {
                     JOptionPane.showMessageDialog(MainGUI.this, "El campo de ID esta vacio", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (NoExisteException ex) {
+                    JOptionPane.showMessageDialog(MainGUI.this, "El animal no existe o ya fue adoptado", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -192,17 +196,18 @@ public class MainGUI extends JFrame {
                     String pacienteID = idpacienteField.getText();
                     String fechaAgenda = fechaCitaField.getText();
                     LocalDate fechaCita = LocalDate.parse(fechaAgenda, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-                    String doctor = (String) comboBoxDoctor.getSelectedItem();
-                    Doctor doctorAsignado = veterinaria.buscarDoctor(doctor);
+                    String especialidad = (String) comboBoxDoctor.getSelectedItem();
+                    Doctor doctorAsignado = veterinaria.buscarDoctorEspecialidad(especialidad);
                     Animal paciente = albergue.buscarAnimal(pacienteID);
                     String nombrePaciente = paciente.getNombreAnimal();
 
-                    String sql = "INSERT INTO citas_programadas VALUES (?, ?, ?)";
+                    String sql = "INSERT INTO citas_programadas VALUES (?, ?, ?, ?)";
 
                     PreparedStatement ps = connection.prepareStatement(sql);
                     ps.setDate(1, Date.valueOf(fechaCita));
                     ps.setString(2, nombrePaciente);
-                    ps.setString(3, doctor);
+                    ps.setString(3, doctorAsignado.getNombrePersona());
+                    ps.setString(4, doctorAsignado.getEspecialidad());
 
                     int filasAfectadas = ps.executeUpdate();
                     if (filasAfectadas > 0) {
@@ -210,26 +215,29 @@ public class MainGUI extends JFrame {
                         idpacienteField.setText("");
                         fechaCitaField.setText("");
                     } else {
-                        JOptionPane.showMessageDialog(null, "Error al agendar cita", "Error", JOptionPane.ERROR_MESSAGE);
+                        throw new SQLException("Error al agendar cita");
                     }
-                        if (doctorAsignado != null) {
-                            if (!albergue.animalYaExiste(albergue.buscarAnimal(pacienteID))) {
-                                JOptionPane.showMessageDialog(MainGUI.this, "Error al agendar cita: El animal no pertenece al albergue", "Error", JOptionPane.ERROR_MESSAGE);
-                            } else {
-                                veterinaria.programarCita(new Cita(fechaCita, paciente, doctorAsignado));
-                                JOptionPane.showMessageDialog(MainGUI.this, paciente.getNombreAnimal() + ", tu cita con el " + doctorAsignado.getNombrePersona() + " esta agendada!", "Cita agendada", JOptionPane.INFORMATION_MESSAGE);
-                            }
-                        }
+
+                    if (!albergue.animalYaExiste(albergue.buscarAnimal(pacienteID))) {
+                        throw new NoExisteException("El animal no se aloja en el albergue");
+                    } else {
+                        veterinaria.programarCita(new Cita(fechaCita, paciente, doctorAsignado));
+                        JOptionPane.showMessageDialog(MainGUI.this, paciente.getNombreAnimal() + ", tu cita con el " + doctorAsignado.getNombrePersona() + " esta agendada!", "Cita agendada", JOptionPane.INFORMATION_MESSAGE);
+                    }
+
                 }catch (DateTimeParseException ex){
                     JOptionPane.showMessageDialog(MainGUI.this, "Error al agendar cita: Hay algun(os) campo(s) vacio(s) o un formato no es valido", "Error", JOptionPane.ERROR_MESSAGE);
 
                 } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(null, "Error al agendar cita", "Error", JOptionPane.ERROR_MESSAGE);
+
+                } catch (NoExisteException ex) {
+                    JOptionPane.showMessageDialog(MainGUI.this, "Error al agendar cita: El animal no pertenece al albergue", "Error", JOptionPane.ERROR_MESSAGE);
                 }
 
             }
         });
-        cancelarCitaButton.addActionListener(new ActionListener() {
+        atenderCitaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -325,7 +333,7 @@ public class MainGUI extends JFrame {
         historialesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Enfermedades frameEnfermedades = new Enfermedades();
+                AtenderCita frameEnfermedades = new AtenderCita();
                 frameEnfermedades.setAlbergue(albergue);
                 frameEnfermedades.setVisible(true);
                 frameEnfermedades.show();
@@ -334,11 +342,30 @@ public class MainGUI extends JFrame {
         nuestrosPequenosButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<Animal> animales = albergue.getListaAnimalesRescatados();
-                NuestrosPequenos pequenos = new NuestrosPequenos(animales);
-                pequenos.setVisible(true);
+                JTextArea listaAnimalesTextArea = new JTextArea(); // Reemplaza "nombreDelTextAreaExistente" con el nombre del JTextArea creado en el diseñador de Swing
+                List<Animal> animalesRescatados = albergue.getListaAnimalesRescatados();
+                StringBuilder listaAnimalesText = new StringBuilder();
+
+                for (Animal animal : animalesRescatados) {
+                    listaAnimalesText.append("Nombre: ").append(animal.getNombreAnimal()).append("\n");
+                    listaAnimalesText.append("Especie: ").append(animal.getEspecie()).append("\n");
+                    listaAnimalesText.append("Fecha de llegada: ").append(animal.getFechaLlegada()).append("\n");
+                    listaAnimalesText.append("ID: ").append(animal.getId()).append("\n");
+                    listaAnimalesText.append("Color: ").append(animal.getColor()).append("\n");
+                    listaAnimalesText.append("Pabellón: ").append(animal.getPabellon()).append("\n");
+                    listaAnimalesText.append("Raza: ").append(animal.getRaza()).append("\n");
+                    listaAnimalesText.append("----------------------------------\n");
+                }
+                listaAnimalesTextArea.setText(listaAnimalesText.toString());
+                JScrollPane scrollPane = new JScrollPane(listaAnimalesTextArea); // Reemplaza "scrollPaneAnimales" con el nombre del JScrollPane creado en el diseñador de Swing
+                scrollPane.setPreferredSize(new Dimension(400, 300));
+
+                JOptionPane.showMessageDialog(MainGUI.this, scrollPane, "Lista de Animales Rescatados", JOptionPane.INFORMATION_MESSAGE);
             }
         });
+
+
+
     }
 
 

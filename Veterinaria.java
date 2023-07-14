@@ -15,11 +15,11 @@ public class Veterinaria {
         doctores = new ArrayList<>();
         citas = new ArrayList<>();
 
-        doctores.add(new Doctor("Dr. Juan Pérez", "092234890", "3676378162","juanperez@hotmail.com","Masculino","Quito","Especialidad en Medicina Interna Canina"));
-        doctores.add(new Doctor("Dra. María Gómez", "0987654321", "589364242","mariagomez@hotmail.com","Femenino","Quito", "Especialidad en Dermatología Felina"));
-        doctores.add(new Doctor("Dr. Carlos Rodríguez", "0992673633", "0832633232", "carlorodri@hotmail.com","Masculino","Quito","Especialidad en Ortopedia y Traumatología Canina"));
-        doctores.add(new Doctor("Dra. Laura Vargas", "0987654321", "7326837232", "dralauvargas@hotmail.com","Femenino","Quito","Especialidad en Cardiología Felina"));
-        doctores.add(new Doctor("Dr. Andrés López", "094321098", "3784728963", "docandres@hotmail.com","Masculino","Quito","Especialidad en Odontología Canina"));
+        doctores.add(new Doctor("Dr. Juan Pérez", "092234890", "3676378162","juanperez@hotmail.com","Masculino","Quito","Medicina Interna Canina"));
+        doctores.add(new Doctor("Dra. María Gómez", "0987654321", "589364242","mariagomez@hotmail.com","Femenino","Quito", "Dermatología Felina"));
+        doctores.add(new Doctor("Dr. Carlos Rodríguez", "0992673633", "0832633232", "carlorodri@hotmail.com","Masculino","Quito","Ortopedia y Traumatología Canina"));
+        doctores.add(new Doctor("Dra. Laura Vargas", "0987654321", "7326837232", "dralauvargas@hotmail.com","Femenino","Quito","Cardiología Felina"));
+        doctores.add(new Doctor("Dr. Andrés López", "094321098", "3784728963", "docandres@hotmail.com","Masculino","Quito","Odontología Canina y Felina"));
     }
 
 
@@ -46,9 +46,11 @@ public class Veterinaria {
     public List<Doctor> getDoctores() {
         return doctores;
     }
-    public Doctor buscarDoctor(String nombreDoctor) {
+
+
+    public Doctor buscarDoctorEspecialidad(String especialidad) {
         for (Doctor doctor : doctores) {
-            if (doctor.getNombrePersona().equals(nombreDoctor)) {
+            if (doctor.getEspecialidad().equals(especialidad)) {
                 return doctor;
             }
         }
