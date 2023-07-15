@@ -60,5 +60,22 @@ public AtenderCita() {
             }
         }
     });
+
 }
+
+    public JTextField getEnfermedadesField1() {
+        return enfermedadesField1;
+    }
+
+    public JTextField getPesoTextField() {
+        return pesoTextField;
+    }
+
+    public JTextField getVacunasTextField() {
+        return vacunasTextField;
+    }
+
+    public JTextField getDesparacitacionTextField() {
+        return desparacitacionTextField;
+    }
 }

@@ -90,6 +90,9 @@ public class Responsable extends JFrame {
                     String direccionAdoptante = direccionField.getText();
                     String generoAdoptante = (String) generoComboBox.getSelectedItem();
 
+                    if(albergue.buscarUsuario(cedulaAdoptante)!= null){
+                        JOptionPane.showMessageDialog(null,albergue.buscarUsuario(cedulaAdoptante).getNombrePersona()+" ya estas registrado! Puedes adoptar de nuevo!", "Bienvenido de nuevo", JOptionPane.INFORMATION_MESSAGE);
+                    }
 
                     if (!validarCedulaEcuatoriana(cedulaAdoptante)) {
                         throw new CedulaInvalidaException("La cedula no tiene el formato permitido");
@@ -112,11 +115,11 @@ public class Responsable extends JFrame {
                     ps.setString(4, celularAdoptante);
                     ps.setString(5, cedulaAdoptante);
 
-                    String sql2 = "DELETE FROM animales_rescatados WHERE id_animal = ?";
+                    String sql2 = "DELETE FROM animales_rescatados WHERE id_animal = ?"; //Elimina los animales adoptados de la tabla de rescatados
                     PreparedStatement ps2 = connection.prepareStatement(sql2);
                     ps2.setString(1, idAdopcion);
                     albergue.adoptarAnimal(animalAdoptado);
-
+                    albergue.getUsuarios().add(animalAdoptado.getDuenio());
                     int filasAfectadas2 = ps2.executeUpdate();
                     int filasAfectadas = ps.executeUpdate();
                     if (filasAfectadas > 0) {

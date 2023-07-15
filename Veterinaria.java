@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,6 +71,8 @@ public class Veterinaria {
         return encontrada;
     }
 
+
+
     public void verCitas() {
         for (Cita cita : citas) {
             System.out.println("Información de la cita:");
@@ -80,7 +83,14 @@ public class Veterinaria {
             System.out.println("---------------------------");
         }
     }
-
+    public boolean existeCita(LocalDate fechaCita, String doctor) {
+        for (Cita cita : citas) {
+            if (cita.getFechaAgendada().equals(fechaCita) && cita.getDoctorAsignado().getNombrePersona().equals(doctor)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public List<Cita> getCitas() {
         return citas;
     }

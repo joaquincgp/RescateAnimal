@@ -44,6 +44,7 @@ public class MainGUI extends JFrame {
     private JTextField razaTextField;
     private JButton nuestrosPequenosButton;
     private JComboBox comboBoxEspecie;
+    private JComboBox horaComboBox;
     private JTextPane panelLista;
     private JTextArea listaAnimales;
     private JScrollPane scrollPaneAnimales;
@@ -196,18 +197,27 @@ public class MainGUI extends JFrame {
                     String pacienteID = idpacienteField.getText();
                     String fechaAgenda = fechaCitaField.getText();
                     LocalDate fechaCita = LocalDate.parse(fechaAgenda, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                    String horaCita = (String) horaComboBox.getSelectedItem();
                     String especialidad = (String) comboBoxDoctor.getSelectedItem();
                     Doctor doctorAsignado = veterinaria.buscarDoctorEspecialidad(especialidad);
                     Animal paciente = albergue.buscarAnimal(pacienteID);
                     String nombrePaciente = paciente.getNombreAnimal();
+                    Cita nuevaCita = new Cita(fechaCita,horaCita,paciente, doctorAsignado);
+                    String sql = "INSERT INTO citas_programadas VALUES (?, ?, ?, ?, ?)";
 
-                    String sql = "INSERT INTO citas_programadas VALUES (?, ?, ?, ?)";
-
+                    if(fechaCita.isBefore(LocalDate.now())){
+                        throw new FechaInvalidaException("La fecha de la cita no esta disponible. Ingresa una fecha valida");
+                    }
+                    if (veterinaria.existeCita(fechaCita, doctorAsignado.getNombrePersona())) {
+                        throw new YaExisteException("Ya existe una cita programada en ese horario");
+                    }
                     PreparedStatement ps = connection.prepareStatement(sql);
                     ps.setDate(1, Date.valueOf(fechaCita));
                     ps.setString(2, nombrePaciente);
                     ps.setString(3, doctorAsignado.getNombrePersona());
                     ps.setString(4, doctorAsignado.getEspecialidad());
+                    ps.setString(5, horaCita);
+
 
                     int filasAfectadas = ps.executeUpdate();
                     if (filasAfectadas > 0) {
@@ -221,8 +231,8 @@ public class MainGUI extends JFrame {
                     if (!albergue.animalYaExiste(albergue.buscarAnimal(pacienteID))) {
                         throw new NoExisteException("El animal no se aloja en el albergue");
                     } else {
-                        veterinaria.programarCita(new Cita(fechaCita, paciente, doctorAsignado));
-                        JOptionPane.showMessageDialog(MainGUI.this, paciente.getNombreAnimal() + ", tu cita con el " + doctorAsignado.getNombrePersona() + " esta agendada!", "Cita agendada", JOptionPane.INFORMATION_MESSAGE);
+                        veterinaria.programarCita(nuevaCita);
+                        JOptionPane.showMessageDialog(MainGUI.this, paciente.getNombreAnimal() + ", tu cita con el " + doctorAsignado.getNombrePersona() + " para las "+horaCita+ " del "+ fechaCita, "Cita agendada", JOptionPane.INFORMATION_MESSAGE);
                     }
 
                 }catch (DateTimeParseException ex){
@@ -233,6 +243,10 @@ public class MainGUI extends JFrame {
 
                 } catch (NoExisteException ex) {
                     JOptionPane.showMessageDialog(MainGUI.this, "Error al agendar cita: El animal no pertenece al albergue", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (FechaInvalidaException ex) {
+                    JOptionPane.showMessageDialog(MainGUI.this, "Error al agendar cita: La fecha tiene qu", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (YaExisteException ex) {
+                    throw new RuntimeException(ex);
                 }
 
             }
@@ -247,6 +261,9 @@ public class MainGUI extends JFrame {
                         throw new CampoVacioException("Campo vacio");
                     }else{
                         if (citaCancelar != null) {
+                            AtenderCita frameEnfermedades = new AtenderCita();
+                            frameEnfermedades.setAlbergue(albergue);
+                            frameEnfermedades.setVisible(true);
                             veterinaria.cancelarCita(citaCancelar);
                         }
                     }
@@ -333,10 +350,7 @@ public class MainGUI extends JFrame {
         historialesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                AtenderCita frameEnfermedades = new AtenderCita();
-                frameEnfermedades.setAlbergue(albergue);
-                frameEnfermedades.setVisible(true);
-                frameEnfermedades.show();
+
             }
         });
         nuestrosPequenosButton.addActionListener(new ActionListener() {
