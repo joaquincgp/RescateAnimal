@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="panelPrincipal" layout-manager="GridLayoutManager" row-count="16" column-count="14" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="1433" height="752"/>
+      <xy x="20" y="20" width="1439" height="752"/>
     </constraints>
     <properties>
       <background color="-4277637"/>
@@ -344,12 +344,12 @@
           <grid row="10" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Donante"/>
+          <text value="Cedula donante"/>
         </properties>
       </component>
       <component id="64d11" class="javax.swing.JLabel">
         <constraints>
-          <grid row="11" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="11" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="5" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Monto"/>
@@ -357,7 +357,7 @@
       </component>
       <component id="5c91a" class="javax.swing.JLabel">
         <constraints>
-          <grid row="3" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="ID Paciente"/>
@@ -365,7 +365,7 @@
       </component>
       <component id="5e9bf" class="javax.swing.JLabel">
         <constraints>
-          <grid row="4" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Especialidad"/>
@@ -373,7 +373,7 @@
       </component>
       <component id="3d421" class="javax.swing.JLabel">
         <constraints>
-          <grid row="5" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="4" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Fecha"/>
@@ -446,7 +446,7 @@
       </component>
       <component id="2848c" class="javax.swing.JLabel">
         <constraints>
-          <grid row="12" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="12" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="5" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Motivo"/>

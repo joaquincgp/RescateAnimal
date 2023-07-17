@@ -83,7 +83,7 @@ public class Albergue {
             }
         }
         if(!encontre){
-            JOptionPane.showMessageDialog(null, "El animal no existe", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "El animal no existe o no se ingreso", "Error", JOptionPane.ERROR_MESSAGE);
         }
         return animalBuscado;
     }
@@ -100,9 +100,6 @@ public class Albergue {
                 usuarioBuscado= p;
                 encontre = true;
             }
-        }
-        if(!encontre){
-            JOptionPane.showMessageDialog(null, "El usuario no existe");
         }
         return usuarioBuscado;
     }

@@ -33,16 +33,7 @@ public class Veterinaria {
         citas.add(cita);
     }
 
-    public void cancelarCita(Cita cita) {
-        if(buscarCitaPorIdPaciente(cita.getPaciente().getId()) != null){
-            citas.remove(cita);
-            JOptionPane.showMessageDialog(null,"La cita con "+cita.getPaciente().getNombreAnimal()+" para el "+cita.getFechaAgendada()+ " se cancelo");
-        }else{
-            JOptionPane.showMessageDialog(null,"No hay citas asociadas con este animal");
 
-        }
-
-    }
 
     public List<Doctor> getDoctores() {
         return doctores;
@@ -83,9 +74,9 @@ public class Veterinaria {
             System.out.println("---------------------------");
         }
     }
-    public boolean existeCita(LocalDate fechaCita, String doctor) {
+    public boolean existeCita(LocalDate fechaCita, String doctor, String hora) {
         for (Cita cita : citas) {
-            if (cita.getFechaAgendada().equals(fechaCita) && cita.getDoctorAsignado().getNombrePersona().equals(doctor)) {
+            if (cita.getFechaAgendada().equals(fechaCita) && cita.getDoctorAsignado().getNombrePersona().equals(doctor) && cita.getHora().equals(hora)) {
                 return true;
             }
         }

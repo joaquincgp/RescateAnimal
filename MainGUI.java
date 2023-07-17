@@ -99,6 +99,7 @@ public class MainGUI extends JFrame {
 
                     if (nombreAnimal.isEmpty() || inputFecha.isEmpty() || idAnimal.isEmpty() || especieTexto.isEmpty() || colorAnimal.isEmpty() || pabellon.isEmpty() || raza.isEmpty()) {
                         throw new CampoVacioException("Algun campo esta vacio");
+
                     } else  if (fechaLlegada.isAfter(fechaActual)) {
                         throw new FechaInvalidaException("La fecha de nacimiento debe ser menor a la fecha actual");
                     } else if (!nombreAnimal.matches(caracteresPermitidos) || !colorAnimal.matches(caracteresPermitidos) || !pabellon.matches(caracteresPermitidos) || !raza.matches(caracteresPermitidos)){
@@ -111,8 +112,8 @@ public class MainGUI extends JFrame {
                         throw new PabellonIncorrectoException("Pabellon incorrecto");
                     } else if (!especieTexto.equals("PERRO") && !especieTexto.equals("GATO")) {
                         throw new NoExisteCategoriaException("No existe categoria");
-
-                    } else{
+                    }
+                    else{
                         Animal.Especie especieAnimal = Animal.Especie.valueOf(especieTexto);
                         Animal animalRegistrado = new Animal(nombreAnimal, fechaLlegada, idAnimal, colorAnimal, pabellon, especieAnimal, raza);
                         if(albergue.animalYaExiste(animalRegistrado)){
@@ -145,15 +146,27 @@ public class MainGUI extends JFrame {
 
                 } catch (CampoVacioException | DateTimeParseException ex) {
                     JOptionPane.showMessageDialog(null, "Error al registrar animalito: Hay algun(os) campo(s) vacio(s) o un formato no es valido", "Error", JOptionPane.ERROR_MESSAGE);
+                    nombreInscripcionlField.setText("");
+                    fechaNacimientoField.setText("");
+                    colorField.setText("");
+                    pabellonField.setText("");
+                    razaTextField.setText("");
                 }  catch (SQLException ex) {
                     JOptionPane.showMessageDialog(null, "Error al inscribir el animal: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     ex.printStackTrace();
                 } catch (FechaInvalidaException ex) {
                     JOptionPane.showMessageDialog(null, "La fecha de recibimiento no puede ser mayor a la actual: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    fechaNacimientoField.setText("");
                 } catch (CaracteresNoValidosException ex) {
                     JOptionPane.showMessageDialog(null, "Algun campo contiene datos inadmisibles: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    nombreInscripcionlField.setText("");
+                    fechaNacimientoField.setText("");
+                    colorField.setText("");
+                    pabellonField.setText("");
+                    razaTextField.setText("");
                 } catch (NoExisteException ex) {
                     JOptionPane.showMessageDialog(null, "No existe el pabellon, eliga entre A o B", "Error", JOptionPane.ERROR_MESSAGE);
+                    pabellonField.setText("");
                 } catch (YaExisteException ex) {
                     JOptionPane.showMessageDialog(null, "Ya existe el animal", "Error", JOptionPane.ERROR_MESSAGE);
                 } catch (NoExisteCategoriaException ex) {
@@ -182,8 +195,10 @@ public class MainGUI extends JFrame {
                     }
                 } catch (CampoVacioException ex) {
                     JOptionPane.showMessageDialog(MainGUI.this, "El campo de ID esta vacio", "Error", JOptionPane.ERROR_MESSAGE);
+                    idAdopcionField.setText("");
                 } catch (NoExisteException ex) {
                     JOptionPane.showMessageDialog(MainGUI.this, "El animal no existe o ya fue adoptado", "Error", JOptionPane.ERROR_MESSAGE);
+                    idAdopcionField.setText("");
                 }
             }
         });
@@ -208,9 +223,18 @@ public class MainGUI extends JFrame {
                     if(fechaCita.isBefore(LocalDate.now())){
                         throw new FechaInvalidaException("La fecha de la cita no esta disponible. Ingresa una fecha valida");
                     }
-                    if (veterinaria.existeCita(fechaCita, doctorAsignado.getNombrePersona())) {
-                        throw new YaExisteException("Ya existe una cita programada en ese horario");
+                    if (veterinaria.existeCita(fechaCita, doctorAsignado.getNombrePersona(), horaCita)) {
+                        throw new YaExisteException("Ya existe una cita programada para este paciente en ese horario");
                     }
+
+
+                    if (!albergue.animalYaExiste(albergue.buscarAnimal(pacienteID))) {
+                        throw new NoExisteException("El animal no se aloja en el albergue");
+                    } else {
+                        veterinaria.programarCita(nuevaCita);
+                        JOptionPane.showMessageDialog(MainGUI.this, paciente.getNombreAnimal() + ", tu cita con el " + doctorAsignado.getNombrePersona() + " para las "+horaCita+ " del "+ fechaCita, "Cita agendada", JOptionPane.INFORMATION_MESSAGE);
+                    }
+
                     PreparedStatement ps = connection.prepareStatement(sql);
                     ps.setDate(1, Date.valueOf(fechaCita));
                     ps.setString(2, nombrePaciente);
@@ -227,14 +251,6 @@ public class MainGUI extends JFrame {
                     } else {
                         throw new SQLException("Error al agendar cita");
                     }
-
-                    if (!albergue.animalYaExiste(albergue.buscarAnimal(pacienteID))) {
-                        throw new NoExisteException("El animal no se aloja en el albergue");
-                    } else {
-                        veterinaria.programarCita(nuevaCita);
-                        JOptionPane.showMessageDialog(MainGUI.this, paciente.getNombreAnimal() + ", tu cita con el " + doctorAsignado.getNombrePersona() + " para las "+horaCita+ " del "+ fechaCita, "Cita agendada", JOptionPane.INFORMATION_MESSAGE);
-                    }
-
                 }catch (DateTimeParseException ex){
                     JOptionPane.showMessageDialog(MainGUI.this, "Error al agendar cita: Hay algun(os) campo(s) vacio(s) o un formato no es valido", "Error", JOptionPane.ERROR_MESSAGE);
 
@@ -243,10 +259,15 @@ public class MainGUI extends JFrame {
 
                 } catch (NoExisteException ex) {
                     JOptionPane.showMessageDialog(MainGUI.this, "Error al agendar cita: El animal no pertenece al albergue", "Error", JOptionPane.ERROR_MESSAGE);
+                    idpacienteField.setText("");
                 } catch (FechaInvalidaException ex) {
-                    JOptionPane.showMessageDialog(MainGUI.this, "Error al agendar cita: La fecha tiene qu", "Error", JOptionPane.ERROR_MESSAGE);
-                } catch (YaExisteException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(MainGUI.this, "Error al agendar cita: La fecha tiene que ser el dia de hoy o un dia posterior", "Error", JOptionPane.ERROR_MESSAGE);
+                    fechaCitaField.setText("");
+                }
+                catch (YaExisteException ex) {
+                    JOptionPane.showMessageDialog(MainGUI.this, "Ya existe una cita programada en este horario", "Error", JOptionPane.ERROR_MESSAGE);
+                    idpacienteField.setText("");
+                    fechaCitaField.setText("");
                 }
 
             }
@@ -255,18 +276,22 @@ public class MainGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
+                    conectar();
                     String idPaciente = JOptionPane.showInputDialog(MainGUI.this, "Ingrese el ID del paciente");
+                    Animal animalHistorial = albergue.buscarAnimal(idPaciente);
                     Cita citaCancelar = veterinaria.buscarCitaPorIdPaciente(idPaciente);
+                    citaCancelar.setPaciente(animalHistorial);
                     if(idPaciente.isEmpty()){
                         throw new CampoVacioException("Campo vacio");
-                    }else{
+                    }else {
                         if (citaCancelar != null) {
-                            AtenderCita frameEnfermedades = new AtenderCita();
+                            AtenderCita frameEnfermedades = new AtenderCita(idPaciente, citaCancelar);
                             frameEnfermedades.setAlbergue(albergue);
                             frameEnfermedades.setVisible(true);
-                            veterinaria.cancelarCita(citaCancelar);
                         }
                     }
+
+
                 }catch (CampoVacioException ex){
                     JOptionPane.showMessageDialog(MainGUI.this, "Error al cancelar cita: Hay algun(os) campo(s) vacio(s) o un formato no es valido", "Error", JOptionPane.ERROR_MESSAGE);
 
@@ -282,6 +307,9 @@ public class MainGUI extends JFrame {
                     String donante = donanteField.getText();
                     double monto = Double.parseDouble((montoField.getText()));
                     String motivo = motivoTextField.getText();
+                    if(albergue.buscarUsuario(donante) == null){
+                        throw new NoExisteException("Usuario no puede donar. No esta registrado");
+                    }
                     cuenta.registrarDonacion(new Donacion(donante, monto, motivo));
                     JOptionPane.showMessageDialog(MainGUI.this, "Ya se han recolectado $"+cuenta.getTotal());
                     String sql = "INSERT INTO donaciones VALUES (?, ?, ?, ?, ?)";
@@ -307,6 +335,8 @@ public class MainGUI extends JFrame {
                 } catch (NumberFormatException nfe) {
                     JOptionPane.showMessageDialog(MainGUI.this, "Error al realizar donacion: Hay algun(os) campo(s) vacio(s) o un formato no es valido", "Error", JOptionPane.ERROR_MESSAGE);
                 } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                } catch (NoExisteException ex) {
                     throw new RuntimeException(ex);
                 }
             }
@@ -350,7 +380,27 @@ public class MainGUI extends JFrame {
         historialesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                JTextArea listaCitas = new JTextArea();
+                List<Cita> citas = veterinaria.getCitas();
+                StringBuilder listaCitasText = new StringBuilder();
 
+                for (Cita cita : citas) {
+                    listaCitasText.append("Paciente: ").append(cita.getPaciente().getNombreAnimal()).append("\n");
+                    listaCitasText.append("Fecha: ").append(cita.getFechaAgendada()).append("\n");
+                    listaCitasText.append("Hora: ").append(cita.getHora()).append("\n");
+                    listaCitasText.append("Doctor asignado: ").append(cita.getDoctorAsignado().getNombrePersona()).append("\n");
+                    listaCitasText.append("Especialidad: ").append(cita.getDoctorAsignado().getEspecialidad()).append("\n");
+                    if(cita.fueAtendido()){
+                        listaCitasText.append("Atendida: ").append("Si").append("\n");
+                    }else{
+                        listaCitasText.append("Atendida: ").append("No").append("\n");
+                    }
+                    listaCitasText.append("----------------------------------\n");
+                }
+                listaCitas.setText(listaCitasText.toString());
+                JScrollPane scrollPane = new JScrollPane(listaCitas);
+                scrollPane.setPreferredSize(new Dimension(400, 300));
+                JOptionPane.showMessageDialog(MainGUI.this, scrollPane, "Lista de Citas", JOptionPane.INFORMATION_MESSAGE);
             }
         });
         nuestrosPequenosButton.addActionListener(new ActionListener() {

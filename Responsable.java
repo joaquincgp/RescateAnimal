@@ -1,5 +1,7 @@
+import Exceptions.CampoVacioException;
+import Exceptions.CaracteresNoValidosException;
 import Exceptions.CedulaInvalidaException;
-import com.sun.tools.javac.Main;
+import Exceptions.FechaInvalidaException;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -8,6 +10,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Responsable extends JFrame {
 
@@ -19,6 +23,7 @@ public class Responsable extends JFrame {
     private JTextField direccionField;
     private JTextField correoField;
     private JButton enviarButton;
+    private JTextField edadTextField;
     private Albergue albergue;
     private String idAdopcion;
     Connection connection;
@@ -60,14 +65,16 @@ public class Responsable extends JFrame {
                 if (digitoVerificadorObtenido==digitoVerificador){
                     return true;
                 }
-
             }
             return false;
-
         }
         return false;
-
-
+    }
+    public boolean validarCorreo(String correo) {
+        String patron = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        Pattern pattern = Pattern.compile(patron);
+        Matcher matcher = pattern.matcher(correo);
+        return matcher.matches();
     }
 
     public Responsable() {
@@ -90,6 +97,18 @@ public class Responsable extends JFrame {
                     String direccionAdoptante = direccionField.getText();
                     String generoAdoptante = (String) generoComboBox.getSelectedItem();
 
+                    if(nombreAdoptante.isEmpty() || cedulaAdoptante.isEmpty() || celularAdoptante.isEmpty() || correoAdoptante.isEmpty()|| direccionAdoptante.isEmpty()){
+                        throw new CampoVacioException("Campos vacios");
+                    }
+
+                    int edad = Integer.parseInt(edadTextField.getText());
+                    if(edad <18){
+                        throw new FechaInvalidaException("Es menor de edad");
+                    }
+                    int celularVerificar = Integer.parseInt(celularField.getText());
+                    if(!validarCorreo(correoAdoptante)){
+                        throw new CaracteresNoValidosException("El correo no es valido");
+                    }
                     if(albergue.buscarUsuario(cedulaAdoptante)!= null){
                         JOptionPane.showMessageDialog(null,albergue.buscarUsuario(cedulaAdoptante).getNombrePersona()+" ya estas registrado! Puedes adoptar de nuevo!", "Bienvenido de nuevo", JOptionPane.INFORMATION_MESSAGE);
                     }
@@ -99,7 +118,7 @@ public class Responsable extends JFrame {
                     }
                     Animal animalAdoptado = albergue.buscarAnimal(idAdopcion);
                     Persona nuevoDuenio = new Persona(nombreAdoptante, celularAdoptante, cedulaAdoptante, correoAdoptante, generoAdoptante, direccionAdoptante );
-
+                    albergue.getUsuarios().add(nuevoDuenio);
 
                     animalAdoptado.setDuenio(nuevoDuenio);
 
@@ -129,6 +148,7 @@ public class Responsable extends JFrame {
                         cedulaField.setText("");
                         correoField.setText("");
                         direccionField.setText("");
+                        edadTextField.setText("");
                         dispose();
                     } else {
                         JOptionPane.showMessageDialog(null, "Error al adoptar el animal", "Error", JOptionPane.ERROR_MESSAGE);
@@ -137,8 +157,18 @@ public class Responsable extends JFrame {
 
                 } catch (CedulaInvalidaException ex) {
                     JOptionPane.showMessageDialog(null, "La cedula no es ecuatoriana", "Error", JOptionPane.ERROR_MESSAGE);
+                    cedulaField.setText("");
                 }catch (SQLException ex){
                     JOptionPane.showMessageDialog(null, "Error al conectar base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (FechaInvalidaException ex) {
+                    JOptionPane.showMessageDialog(null, "Tienes que ser mayor de edad para adoptar", "Error", JOptionPane.ERROR_MESSAGE);
+                }catch (NumberFormatException nfe){
+                    JOptionPane.showMessageDialog(null, "La edad y el celular tienen que ser un numeros", "Error", JOptionPane.ERROR_MESSAGE);
+
+                } catch (CampoVacioException ex) {
+                    JOptionPane.showMessageDialog(null, "Hay algun campo vacio", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (CaracteresNoValidosException ex) {
+                    JOptionPane.showMessageDialog(null, "El correo no tiene un formato valido", "Error", JOptionPane.ERROR_MESSAGE);
 
                 }
             }
