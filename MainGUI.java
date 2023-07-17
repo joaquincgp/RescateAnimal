@@ -307,6 +307,14 @@ public class MainGUI extends JFrame {
                     String donante = donanteField.getText();
                     double monto = Double.parseDouble((montoField.getText()));
                     String motivo = motivoTextField.getText();
+                    String caracteresPermitidos = "^[a-zA-Z]+$";
+
+                    if (donante.isEmpty() || montoField.getText().isEmpty() || motivo.isEmpty()) {
+                        throw new CampoVacioException("Algun campo esta vacio");
+                    }else if (!motivo.matches(caracteresPermitidos)){
+                        throw new CaracteresNoValidosException("Caracteres incorrectos");
+                    }
+
                     if(albergue.buscarUsuario(donante) == null){
                         throw new NoExisteException("Usuario no puede donar. No esta registrado");
                     }
@@ -337,7 +345,11 @@ public class MainGUI extends JFrame {
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 } catch (NoExisteException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(MainGUI.this, "Error al realizar donacion: Usuario no esta registrado", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (CampoVacioException ex) {
+                    JOptionPane.showMessageDialog(MainGUI.this, "Error al realizar donacion: Algun campo esta vacio", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (CaracteresNoValidosException ex) {
+                    JOptionPane.showMessageDialog(MainGUI.this, "Error al realizar donacion: Caracteres no validos", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
