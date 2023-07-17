@@ -45,6 +45,7 @@ public class MainGUI extends JFrame {
     private JButton nuestrosPequenosButton;
     private JComboBox comboBoxEspecie;
     private JComboBox horaComboBox;
+    private JButton buscarHistorialMedicoButton;
     private JTextPane panelLista;
     private JTextArea listaAnimales;
     private JScrollPane scrollPaneAnimales;
@@ -441,7 +442,28 @@ public class MainGUI extends JFrame {
         });
 
 
+        buscarHistorialMedicoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String idPaciente = JOptionPane.showInputDialog(MainGUI.this, "Ingrese el ID del paciente");
+                Animal animalHistorial = albergue.buscarAnimal(idPaciente);
+                JTextArea lista = new JTextArea();
+                List<Animal> animalesRescatados = albergue.getListaAnimalesRescatados();
+                StringBuilder listaCitasText = new StringBuilder();
 
+                for (Animal animal : animalesRescatados) {
+                    listaCitasText.append("Paciente: ").append(animal.getNombreAnimal()).append("\n");
+                    listaCitasText.append("Diagnostico: ").append(animal.getPerfilMedico().getEnfermedades()).append("\n");
+                    listaCitasText.append("Peso: ").append(animal.getPerfilMedico().getPeso()).append("\n");
+                    listaCitasText.append("Vacunas: ").append(animal.getPerfilMedico().getVacunas()).append("\n");
+                    listaCitasText.append("----------------------------------\n");
+                }
+                lista.setText(listaCitasText.toString());
+                JScrollPane scrollPane = new JScrollPane(lista);
+                scrollPane.setPreferredSize(new Dimension(400, 300));
+                JOptionPane.showMessageDialog(MainGUI.this, scrollPane, "Lista de Citas", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
     }
 
 
