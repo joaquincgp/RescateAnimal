@@ -49,7 +49,7 @@ public class Albergue {
         }
 
     }
-    public void adoptarAnimal(Animal animal) {
+    public void darEnAdopcion(Animal animal) {
         Animal animalBuscado = buscarAnimal(animal.getId());
         if (animalBuscado!= null) {
             animalesRescatados.remove(animal);

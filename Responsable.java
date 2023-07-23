@@ -137,7 +137,7 @@ public class Responsable extends JFrame {
                     String sql2 = "DELETE FROM animales_rescatados WHERE id_animal = ?"; //Elimina los animales adoptados de la tabla de rescatados
                     PreparedStatement ps2 = connection.prepareStatement(sql2);
                     ps2.setString(1, idAdopcion);
-                    albergue.adoptarAnimal(animalAdoptado);
+                    albergue.darEnAdopcion(animalAdoptado);
                     albergue.getUsuarios().add(animalAdoptado.getDuenio());
                     int filasAfectadas2 = ps2.executeUpdate();
                     int filasAfectadas = ps.executeUpdate();

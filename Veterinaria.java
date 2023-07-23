@@ -62,18 +62,6 @@ public class Veterinaria {
         return encontrada;
     }
 
-
-
-    public void verCitas() {
-        for (Cita cita : citas) {
-            System.out.println("Información de la cita:");
-            System.out.println("Fecha: " + cita.getFechaAgendada());
-            System.out.println("Animal: " + cita.getPaciente().getNombreAnimal());
-            System.out.println("Dueño: " + cita.getPaciente().getDuenio().getNombrePersona());
-            System.out.println("Veterinario asignado: " + cita.getDoctorAsignado().getNombrePersona());
-            System.out.println("---------------------------");
-        }
-    }
     public boolean existeCita(LocalDate fechaCita, String doctor, String hora) {
         for (Cita cita : citas) {
             if (cita.getFechaAgendada().equals(fechaCita) && cita.getDoctorAsignado().getNombrePersona().equals(doctor) && cita.getHora().equals(hora)) {
